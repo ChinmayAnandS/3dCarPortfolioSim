@@ -62,13 +62,13 @@ export default class Bricks {
 
         switch (this.arrangementType) {
             case 1:
-                this.createStackedBricks(brickGeometry, brickMaterial, bx, by, bz);
+                this.createStackedBricks(brickGeometry, brickMaterial, bx, by);
                 break;
             case 2:
-                this.createStaggeredBricks(brickGeometry, brickMaterial, bx, by, bz);
+                this.createStaggeredBricks(brickGeometry, brickMaterial, bx, by);
                 break;
             case 3:
-                this.createTriangularBricks(brickGeometry, brickMaterial, bx, by, bz);
+                this.createTriangularBricks(brickGeometry, brickMaterial, bx, by);
                 break;
             default:
                 console.error("Invalid arrangement type");
@@ -76,7 +76,7 @@ export default class Bricks {
         }
     }
 
-    private createStackedBricks(brickGeometry: THREE.BoxGeometry, brickMaterial: THREE.MeshBasicMaterial, bx: number, by: number, bz: number): void {
+    private createStackedBricks(brickGeometry: THREE.BoxGeometry, brickMaterial: THREE.MeshBasicMaterial, bx: number, by: number): void {
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.columns; j++) {
                 const x = (j - this.columns / 2) * (bx + this.brickOffset) + this.wallPosition.x;
@@ -88,7 +88,7 @@ export default class Bricks {
         }
     }
 
-    private createStaggeredBricks(brickGeometry: THREE.BoxGeometry, brickMaterial: THREE.MeshBasicMaterial, bx: number, by: number, bz: number): void {
+    private createStaggeredBricks(brickGeometry: THREE.BoxGeometry, brickMaterial: THREE.MeshBasicMaterial, bx: number, by: number): void {
         for (let i = 0; i < this.rows; i++) {
             const rowColumns = i % 2 === 0 ? this.columns - 1 : this.columns;
             for (let j = 0; j < rowColumns; j++) {
@@ -101,7 +101,7 @@ export default class Bricks {
         }
     }
 
-    private createTriangularBricks(brickGeometry: THREE.BoxGeometry, brickMaterial: THREE.MeshBasicMaterial, bx: number, by: number, bz: number): void {
+    private createTriangularBricks(brickGeometry: THREE.BoxGeometry, brickMaterial: THREE.MeshBasicMaterial, bx: number, by: number): void {
         for (let i = 0; i < this.rows; i++) {
             const rowColumns = this.columns - i;
             for (let j = 0; j < rowColumns; j++) {

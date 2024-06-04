@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es'
 
-import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+// import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+// import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { Sky } from 'three/addons/objects/Sky.js'
+// import { Sky } from 'three/addons/objects/Sky.js'
 
 interface Position {
     x: number;
@@ -103,16 +103,16 @@ export default class planeSetup {
         scene.background = texture
     }
 
-    private createSky() {
-        const sky = new Sky();
-        sky.scale.setScalar(450000);
-        const phi = THREE.MathUtils.degToRad(-90);
-        const theta = THREE.MathUtils.degToRad(90);
-        const sunPos = new THREE.Vector3().setFromSphericalCoords(1, phi, theta);
-        sky.material.uniforms.sunPosition.value = sunPos
+    // private createSky() {
+    //     const sky = new Sky();
+    //     sky.scale.setScalar(450000);
+    //     const phi = THREE.MathUtils.degToRad(-90);
+    //     const theta = THREE.MathUtils.degToRad(90);
+    //     const sunPos = new THREE.Vector3().setFromSphericalCoords(1, phi, theta);
+    //     sky.material.uniforms.sunPosition.value = sunPos
 
-        this.scene.add(sky)
-    }
+    //     this.scene.add(sky)
+    // }
 
     private socialsSetup(position: Position, scale: Scale) {
         this.addPropsGLTF('/assets/socials/github.glb', { x: position.x, y: position.y, z: position.z }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
@@ -125,29 +125,29 @@ export default class planeSetup {
         this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 30 }, { x: 0, y: 0, z: 0, angle: 0 }, 0);
     }
 
-    private initPlane() {
-        const planeGeometry = new THREE.PlaneGeometry(125, 125);
-        const planeMaterial = new THREE.ShaderMaterial({
-            vertexShader: `
-                varying vec2 vUv;
-                void main() {
-                vUv = uv;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                }
-            `,
-            fragmentShader: `
-                varying vec2 vUv;
-                void main() {
-                gl_FragColor = mix(vec4(0.0, 0.0, 1.0, 1.0), vec4(0.0, 1.0, 0.0, 1.0), vUv.y);
-                }
-            `,
-            side: THREE.DoubleSide
-        });
-        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        plane.rotation.x = -Math.PI / 2;
-        plane.position.set(0, 0, 0);
-        this.scene.add(plane);
-    }
+    // private initPlane() {
+    //     const planeGeometry = new THREE.PlaneGeometry(125, 125);
+    //     const planeMaterial = new THREE.ShaderMaterial({
+    //         vertexShader: `
+    //             varying vec2 vUv;
+    //             void main() {
+    //             vUv = uv;
+    //             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    //             }
+    //         `,
+    //         fragmentShader: `
+    //             varying vec2 vUv;
+    //             void main() {
+    //             gl_FragColor = mix(vec4(0.0, 0.0, 1.0, 1.0), vec4(0.0, 1.0, 0.0, 1.0), vUv.y);
+    //             }
+    //         `,
+    //         side: THREE.DoubleSide
+    //     });
+    //     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    //     plane.rotation.x = -Math.PI / 2;
+    //     plane.position.set(0, 0, 0);
+    //     this.scene.add(plane);
+    // }
 
     private addPropsGLTF(path: string, position: Position, scale: Scale, rotation: Position) {
         this.loader.load(path, (gltf) => {
@@ -160,21 +160,21 @@ export default class planeSetup {
         });
     }
 
-    private addPropsMTL_OBJ(path: string, position: Position, scale: Scale, rotation: Position) {
-        const mtlLoader = new MTLLoader();
-        const objLoader = new OBJLoader();
-        mtlLoader.load(`${path}.mtl`, (materials) => {
-            materials.preload();
-            objLoader.setMaterials(materials);
-            objLoader.load(`${path}.obj`, (object) => {
-                object.scale.set(scale.x, scale.y, scale.z);
-                object.rotation.set(rotation.x, rotation.y, rotation.z);
-                object.position.set(position.x, position.y, position.z);
-                this.scene.add(object);
-                this.clickables.push(object); // add to clickable objects array
-            });
-        });
-    }
+    // private addPropsMTL_OBJ(path: string, position: Position, scale: Scale, rotation: Position) {
+    //     const mtlLoader = new MTLLoader();
+    //     const objLoader = new OBJLoader();
+    //     mtlLoader.load(`${path}.mtl`, (materials) => {
+    //         materials.preload();
+    //         objLoader.setMaterials(materials);
+    //         objLoader.load(`${path}.obj`, (object) => {
+    //             object.scale.set(scale.x, scale.y, scale.z);
+    //             object.rotation.set(rotation.x, rotation.y, rotation.z);
+    //             object.position.set(position.x, position.y, position.z);
+    //             this.scene.add(object);
+    //             this.clickables.push(object); // add to clickable objects array
+    //         });
+    //     });
+    // }
 
     private addBorder(): void {
         const borderThickness = 5;

@@ -3,7 +3,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import * as CANNON from 'cannon-es'
-import CannonDebugger from 'cannon-es-debugger'
+// import CannonDebugger from 'cannon-es-debugger'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import Stats from 'three/addons/libs/stats.module.js'
 import TWEEN from '@tweenjs/tween.js'
@@ -393,7 +393,7 @@ world.broadphase = new CANNON.SAPBroadphase(world)
 world.defaultContactMaterial.friction = 0
 
 //cannon debugger
-const cannonDebugger = new (CannonDebugger as any)(scene, world)
+// const cannonDebugger = new (CannonDebugger as any)(scene, world)
 
 function animate() {
   //update physics

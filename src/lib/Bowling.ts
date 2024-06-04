@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+// import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+// import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
 import AddPropGLTF from '../util/addPropGLTF';
 import AddCannonBox from '../util/addCannonBox';
@@ -13,18 +13,18 @@ interface Position {
     z: number;
 }
 
-interface Scale {
-    x: number;
-    y: number;
-    z: number;
-}
+// interface Scale {
+//     x: number;
+//     y: number;
+//     z: number;
+// }
 
-interface Rotation {
-    x: number;
-    y: number;
-    z: number;
-    angle: number;
-}
+// interface Rotation {
+//     x: number;
+//     y: number;
+//     z: number;
+//     angle: number;
+// }
 
 interface BallDimensions {
     radius: number;
@@ -49,8 +49,8 @@ export default class Bowling {
     private ballPhysicsMaterial: CANNON.Material;
     private pinPhysicsMaterial: CANNON.Material;
     private GLTFloader: GLTFLoader;
-    private MTLLoader: MTLLoader;
-    private OBJLoader: OBJLoader;
+    // private MTLLoader: MTLLoader;
+    // private OBJLoader: OBJLoader;
     private ballMesh!: THREE.Object3D;
     private ballBody!: CANNON.Body;
     private pinMesh!: THREE.Group;
@@ -65,8 +65,8 @@ export default class Bowling {
         this.pinsPosition = pinsPosition;
         this.rows = rows;
         this.GLTFloader = new GLTFLoader();
-        this.MTLLoader = new MTLLoader();
-        this.OBJLoader = new OBJLoader();
+        // this.MTLLoader = new MTLLoader();
+        // this.OBJLoader = new OBJLoader();
         this.ballRadius = ballRadius.radius;
         this.pinDim = pinDim;
         this.modelsLoaded = false; // Add this flag to check if models are loaded
@@ -175,7 +175,8 @@ export default class Bowling {
     }
 
     private createPinsInTriangle(): void {
-        const { topRadius, bottomRadius, height, pinSegments } = this.pinDim;
+        // const { topRadius, bottomRadius, height, pinSegments } = this.pinDim;
+        const height = this.pinDim.height
         const { x, y, z } = this.pinsPosition;
         const pinSpacing = 0.5 * 2 + 0.05; // Add a small spacing between pins
 
