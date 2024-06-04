@@ -8,14 +8,10 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import Stats from 'three/addons/libs/stats.module.js'
 import TWEEN from '@tweenjs/tween.js'
 import planeSetup from './lib/planeSetup'
-import { GUI } from 'dat.gui'
 import Bricks from './lib/Bricks'
 import { CustomBody } from './lib/CustomBody'
 import Bowling from './lib/Bowling'
 import Rampjump from './lib/Rampjump'
-// import TextName, { FontName, TextNameOptions } from './lib/TextName'
-import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import TextName from './lib/TextName'
 import SignBoard from './lib/signBoard'
 import Project from './lib/project'
@@ -24,17 +20,24 @@ import Project from './lib/project'
 const scene = new THREE.Scene()
 
 //light
-const light = new THREE.DirectionalLight(undefined, Math.PI)
-light.position.set(1, 1, 1)
-scene.add(light)
+// const light = new THREE.DirectionalLight(0xffffff, Math.PI)
+// light.position.set(1, 1, 1)
+// scene.add(light)
 
-const light2 = new THREE.DirectionalLight(undefined, Math.PI)
-light2.position.set(-1, -1, -1)
-scene.add(light2)
+// const light2 = new THREE.DirectionalLight(0xffffff, Math.PI)
+// light2.position.set(-1, -1, -1)
+// scene.add(light2)
+
+// const light = new THREE.AmbientLight(0xFFFFFF); // soft white light
+// light.intensity = 3
+// scene.add(light);
+
+const light1 = new THREE.HemisphereLight(0xffffbb, 0xfa5f55, 4);
+scene.add(light1);
 
 //axes helper
-const axesHelper = new THREE.AxesHelper(5)
-scene.add(axesHelper)
+// const axesHelper = new THREE.AxesHelper(5)
+// scene.add(axesHelper)
 
 //camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
@@ -44,10 +47,10 @@ const endPosition = { x: -62.92, y: 4.71, z: -15.04 }
 const camera1 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 camera1.position.set(0, 0, 0)
 
-const cameraHelper = new THREE.CameraHelper(camera)
-scene.add(cameraHelper)
-const cameraHelper1 = new THREE.CameraHelper(camera1)
-scene.add(cameraHelper1)
+// const cameraHelper = new THREE.CameraHelper(camera)
+// scene.add(cameraHelper)
+// const cameraHelper1 = new THREE.CameraHelper(camera1)
+// scene.add(cameraHelper1)
 
 // Set up the tween
 const tween = new TWEEN.Tween(camera.position)
@@ -163,7 +166,7 @@ vehicle.addToWorld(world)
 //add the wheel bodies
 const wheelBodies: any[] = []
 const wheelMaterial = new CANNON.Material('wheel')
-vehicle.wheelInfos.forEach((wheel, index) => {
+vehicle.wheelInfos.forEach((wheel) => {
   const cylinder = new CANNON.Cylinder(wheel.radius, wheel.radius, wheel.radius, wheelOptions.segments)
   const wheelBody = new CANNON.Body({
     mass: 0,
@@ -221,7 +224,7 @@ const controller = {
   maxSpeed: 100,
   nosBoost: 1000,
   resetCar: () => {
-    carBody.position.set(-50, 5, -10)
+    carBody.position.set(-56, 5, -15)
     // carBody.quaternion.set(0, 0, 0, 1)
     carBody.velocity.set(0, 0, 0)
     carBody.angularVelocity.set(0, -0.5, 0)
@@ -301,7 +304,7 @@ const progressBar = document.getElementById('progressBar') as HTMLProgressElemen
 //add skin to car
 let car: any
 const loader = new GLTFLoader()
-loader.load('assets/car/LowPolyCars2.glb', (gltf) => {
+loader.load('assets/car/LowPolyCar3.glb', (gltf) => {
   progressBar.style.display = 'none'
   car = gltf.scene
   car.scale.set(1, 1, 1)
@@ -317,7 +320,7 @@ loader.load('assets/car/LowPolyCars2.glb', (gltf) => {
 //load wheel skin
 let wheels: any[] = []
 const wheelLoader = new GLTFLoader()
-wheelLoader.load('assets/car/carWheel1.glb', (gltf) => {
+wheelLoader.load('assets/car/carWheel3.glb', (gltf) => {
   const wheelModel = gltf.scene
   for (let i = 0; i < 4; i++) {
     if (i === 1 || i === 3) continue
@@ -327,7 +330,7 @@ wheelLoader.load('assets/car/carWheel1.glb', (gltf) => {
   }
 })
 
-wheelLoader.load('assets/car/carWheel.glb', (gltf) => {
+wheelLoader.load('assets/car/carWheel2.glb', (gltf) => {
   const wheelModel = gltf.scene
   for (let i = 0; i < 4; i++) {
     if (i === 0 || i === 2) continue
@@ -342,27 +345,6 @@ wheelLoader.load('assets/car/carWheel.glb', (gltf) => {
 new planeSetup(scene, world, groundBody.material, camera, renderer.domElement)
 
 //playground for car
-//physics for box
-const boxShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5))
-const boxBody = new CANNON.Body({
-  mass: 10,
-  shape: boxShape
-})
-boxBody.position.set(-0, 0.5, 4)
-boxBody.material = new CANNON.Material('boxMaterial')
-const boxGroundContactMaterial = new CANNON.ContactMaterial(boxBody.material, groundBody.material, {
-  friction: 0.9,
-  restitution: 0,
-  contactEquationStiffness: 1000
-})
-world.addBody(boxBody)
-world.addContactMaterial(boxGroundContactMaterial)
-
-const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
-const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-const box = new THREE.Mesh(boxGeometry, boxMaterial)
-box.position.set(0, 0.5, 10)
-scene.add(box)
 
 //bricks
 let bricksArray: Bricks[] = []
@@ -400,7 +382,7 @@ const textName = new TextName(scene, groundBody.material, world, { x: -45, y: 1,
 
 new SignBoard(scene, world, { x: -40, y: 0, z: -5 })
 
-new Project(scene, world, { x: -35, y: 0, z: -45 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 })
+new Project(scene, camera, camera1, world, { x: -35, y: 0, z: -45 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 })
 
 //stats
 const stats = new Stats()
@@ -418,17 +400,13 @@ function animate() {
   world.fixedStep();
 
   //cannon debugger
-  cannonDebugger.update()
+  // cannonDebugger.update()
 
   if (car) {
     car.position.set(carBody.position.x, carBody.position.y, carBody.position.z)
     car.quaternion.copy(carBody.quaternion)
     // console.log('car', car.position)
   }
-
-  //update box
-  box.position.copy(boxBody.position)
-  box.quaternion.copy(boxBody.quaternion)
 
   //update bricks
   bricksArray.forEach(brick => brick.update())
@@ -438,12 +416,6 @@ function animate() {
 
   //update textName
   textName.updateTextPhysics()
-
-  //update cylinder
-  // if (cylinderMesh) {
-  //   cylinderMesh.position.copy(cylinderBody.position)
-  //   cylinderMesh.quaternion.copy(cylinderBody.quaternion)
-  // }
 
   if (wheels.length === 4 && wheelBodies.length === 4) {
     wheelBodies.forEach((wheelBody, index) => {
@@ -456,8 +428,6 @@ function animate() {
   const useSecondCamera = car && car.position.z < -22.5
 
   if (useSecondCamera) {
-    // console.log('car entered projects area')
-    //change orbital controls
     camera1.position.set(car.position.x - 8, car.position.y + 5, car.position.z + 5)
     camera1.lookAt(car.position)
 
@@ -469,11 +439,9 @@ function animate() {
     controls.update()
   }
 
-  // controls.target.copy(carBody.position)
   TWEEN.update()
   renderer.render(scene, useSecondCamera ? camera1 : camera)
   requestAnimationFrame(animate)
-  // console.log(camera.position)
 
   stats.update()
 }

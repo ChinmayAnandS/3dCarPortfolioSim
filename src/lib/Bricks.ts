@@ -58,7 +58,7 @@ export default class Bricks {
     private initBricks(): void {
         const { x: bx, y: by, z: bz } = this.brickSize;
         const brickGeometry = new THREE.BoxGeometry(bx, by, bz);
-        const brickMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const brickMaterial = new THREE.MeshBasicMaterial({ color: 0xbcbcbc });
 
         switch (this.arrangementType) {
             case 1:

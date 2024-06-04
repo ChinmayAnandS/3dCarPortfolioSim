@@ -46,7 +46,7 @@ export default class Rampjump {
     private initRamp(): void {
         const { width, height, depth } = this.rampSize;
         const rampGeometry = new THREE.BoxGeometry(width, height, depth);
-        const rampMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+        const rampMaterial = new THREE.MeshPhongMaterial({ color: 0xffa233 });
         this.rampMesh = new THREE.Mesh(rampGeometry, rampMaterial);
         this.rampMesh.position.set(this.rampPosition.x, this.rampPosition.y, this.rampPosition.z);
         this.rampMesh.setRotationFromAxisAngle(new THREE.Vector3(this.rampAngle.x, this.rampAngle.y, this.rampAngle.z), this.rampAngle.angle);
@@ -65,7 +65,7 @@ export default class Rampjump {
     private initLandingRamp(): void {
         const { width, height, depth } = this.rampSize;
         const rampGeometry = new THREE.BoxGeometry(width, height, depth);
-        const rampMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+        const rampMaterial = new THREE.MeshPhongMaterial({ color: 0xffa233 });
         this.rampMesh = new THREE.Mesh(rampGeometry, rampMaterial);
         this.rampMesh.position.set(this.rampPosition.x, this.rampPosition.y, this.rampPosition.z + 25);
         this.rampMesh.setRotationFromAxisAngle(new THREE.Vector3(this.rampAngle.x, this.rampAngle.y, this.rampAngle.z), -this.rampAngle.angle);

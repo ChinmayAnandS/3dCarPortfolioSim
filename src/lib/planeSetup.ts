@@ -50,7 +50,7 @@ export default class planeSetup {
 
         // this.initPlane();
         this.addBorder();
-        this.addPropsGLTF('/assets/playground/trees/twinTrees.glb', { x: 12, y: 0, z: 12 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 });
+        this.addPropsGLTF('/assets/playground/trees/twinTrees.glb', { x: 17.5, y: 0, z: 15 }, { x: 1, y: 1, z: 1 }, { x: 0, y: Math.PI / 2, z: 0 });
 
         this.socialsSetup({ x: 40, y: 2, z: 0 }, { x: 1, y: 1, z: 1 });
         // this.addPropsMTL_OBJ();
@@ -74,6 +74,20 @@ export default class planeSetup {
         //sky
         // this.createSky()
         this.createTexturedSky(this.scene)
+
+        //add boerder for central area
+        this.addInnerBorder();
+    }
+
+    private addInnerBorder(): void {
+        const border = new CANNON.Box(new CANNON.Vec3(63 / 2, 5 / 2, 28 / 2));
+        const borderBody = new CANNON.Body({
+            mass: 0,
+            material: this.groundBodyMaterial
+        });
+        borderBody.addShape(border);
+        borderBody.position.set(-6.95, 1, -14.65);
+        this.world.addBody(borderBody);
     }
 
     private createTexturedSky(scene: THREE.Scene) {
