@@ -8,12 +8,6 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import Stats from 'three/addons/libs/stats.module.js'
 import { GUI } from 'dat.gui'
 
-//constants
-const length = 1
-const width = 1
-const height = 1
-const segments = 16
-
 //scene
 const scene = new THREE.Scene()
 
@@ -21,6 +15,10 @@ const scene = new THREE.Scene()
 const light = new THREE.DirectionalLight(undefined, Math.PI)
 light.position.set(1, 1, 1)
 scene.add(light)
+
+const light2 = new THREE.DirectionalLight(undefined, Math.PI)
+light2.position.set(-1, -1, -1)
+scene.add(light2)
 
 //axes helper
 const axesHelper = new THREE.AxesHelper(5)
@@ -56,9 +54,14 @@ const world = new CANNON.World({
 })
 
 //create car chassis
+const carDimensions = {
+  length: 1.45,
+  width: 0.25,
+  height: 0.75
+}
 const carBody = new CANNON.Body({
   mass: 300,
-  shape: new CANNON.Box(new CANNON.Vec3(length + 0.75, width - 0.5, height))
+  shape: new CANNON.Box(new CANNON.Vec3(carDimensions.length, carDimensions.width, carDimensions.height))
 })
 carBody.position.set(0, 5, 0)
 carBody.angularVelocity.set(0, 0.5, 0)
@@ -75,11 +78,11 @@ const vehicle = new CANNON.RaycastVehicle({
 
 //wheel options
 const wheelOptions = {
-  radius: 0.5,
+  radius: 0.25,
   directionLocal: new CANNON.Vec3(0, -1, 0),
   suspensionStiffness: 30,
   suspensionRestLength: 0.3,
-  frictionSlip: 1.4,
+  frictionSlip: 1.5,
   dampingRelaxation: 2.3,
   dampingCompression: 4.4,
   maxSuspensionForce: 100000,
@@ -89,16 +92,17 @@ const wheelOptions = {
   maxSuspensionTravel: 0.3,
   customSlidingRotationalSpeed: -30,
   useCustomSlidingRotationalSpeed: true,
+  segments: 16
 }
 
 //set connection points for wheels
-wheelOptions.chassisConnectionPointLocal.set(-length, 0, height)
+wheelOptions.chassisConnectionPointLocal.set(-carDimensions.length + 0.45, 0, carDimensions.height)
 vehicle.addWheel(wheelOptions)
-wheelOptions.chassisConnectionPointLocal.set(-length, 0, -height)
+wheelOptions.chassisConnectionPointLocal.set(-carDimensions.length + 0.45, 0, -carDimensions.height)
 vehicle.addWheel(wheelOptions)
-wheelOptions.chassisConnectionPointLocal.set(length, 0, height)
+wheelOptions.chassisConnectionPointLocal.set(carDimensions.length - 0.45, 0, carDimensions.height)
 vehicle.addWheel(wheelOptions)
-wheelOptions.chassisConnectionPointLocal.set(length, 0, -height)
+wheelOptions.chassisConnectionPointLocal.set(carDimensions.length - 0.45, 0, -carDimensions.height)
 vehicle.addWheel(wheelOptions)
 
 //add vehicle to world
@@ -108,7 +112,7 @@ vehicle.addToWorld(world)
 const wheelBodies: any[] = []
 const wheelMaterial = new CANNON.Material('wheel')
 vehicle.wheelInfos.forEach((wheel) => {
-  const cylinder = new CANNON.Cylinder(wheel.radius, wheel.radius, wheel.radius / 2, segments)
+  const cylinder = new CANNON.Cylinder(wheel.radius, wheel.radius, wheel.radius, wheelOptions.segments)
   const wheelBody = new CANNON.Body({
     mass: 0,
     material: wheelMaterial
@@ -158,15 +162,11 @@ world.addContactMaterial(wheelGroundContactMaterial)
 
 //controller / event listeners
 const controller = {
-  maxSteerVal: 0.5,
+  maxSteerVal: 0.75,
   maxForce: 1000,
   brakeForce: 1000000,
   handBrakeForce: 1000,
   maxSpeed: 100,
-  steerVal: 0,
-  engineForce: 0,
-  brake: 0,
-  handBrake: 0,
   nosBoost: 1000,
   resetCar: () => {
     carBody.position.set(0, 5, 0)
@@ -247,8 +247,23 @@ let car: any
 const loader = new GLTFLoader()
 loader.load('assets/car/LowPolyCars.glb', (gltf) => {
   car = gltf.scene
+  car.scale.set(0.9, 0.9, 0.9)
+  car.position.set(0, 0, 0)
+  car.rotation.set(0, 0, 0)
   scene.add(car)
 })
+
+// //load wheel skin
+// let wheels: any[] = []
+// const wheelLoader = new GLTFLoader()
+// wheelLoader.load('assets/car/carWheel.glb', (gltf) => {
+//   const wheelModel = gltf.scene
+//   for (let i = 0; i < 4; i++) {
+//     const wheel = wheelModel.clone()
+//     scene.add(wheel)
+//     wheels.push(wheel)
+//   }
+// })
 
 //stats
 const stats = new Stats()
@@ -269,9 +284,17 @@ function animate() {
   cannonDebugger.update()
 
   if (car) {
-    car.position.copy(carBody.position)
+    car.position.set(carBody.position.x, carBody.position.y - 0.5, carBody.position.z)
     car.quaternion.copy(carBody.quaternion)
   }
+
+  // if (wheels.length === 4) {
+  //   wheelBodies.forEach((wheelBody, index) => {
+  //     const wheel = wheels[index]
+  //     wheel.position.copy(wheelBody.position)
+  //     wheel.quaternion.copy(wheelBody.quaternion)
+  //   })
+  // }
 
   controls.update()
   renderer.render(scene, camera)
