@@ -6,7 +6,11 @@ import * as CANNON from 'cannon-es'
 import CannonDebugger from 'cannon-es-debugger'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import Stats from 'three/addons/libs/stats.module.js'
+import TWEEN from '@tweenjs/tween.js'
+import planeSetup from './lib/planeSetup'
 import { GUI } from 'dat.gui'
+import Bricks from './lib/Bricks'
+import { CustomBody } from './lib/CustomBody'
 
 //scene
 const scene = new THREE.Scene()
@@ -27,6 +31,21 @@ scene.add(axesHelper)
 //camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 camera.position.set(8, 3, 0)
+const endPosition = { x: 4.5, y: 3.36, z: -2.15 }
+
+// Set up the tween
+const tween = new TWEEN.Tween(camera.position)
+  .to(endPosition, 2000) // 2000 milliseconds (2 seconds) for the transition
+  .onUpdate(() => {
+    // Update the camera position on each tween update
+    camera.position.set(camera.position.x, camera.position.y, camera.position.z);
+  })
+  .easing(TWEEN.Easing.Quadratic.InOut); // Use an easing function for smoothness
+
+// Start the tween after a delay of 3 seconds (3000 milliseconds)
+setTimeout(() => {
+  tween.start();
+}, 1500);
 
 //renderer
 const renderer = new THREE.WebGLRenderer()
@@ -47,6 +66,11 @@ controls.enablePan = false
 controls.enableDamping = true
 controls.dampingFactor = 0.1
 controls.enableZoom = true
+controls.maxDistance = 6
+controls.minDistance = 3
+controls.maxPolarAngle = Math.PI / 3
+controls.minPolarAngle = 0
+controls.cursor = new THREE.Vector3(10, 10, 10)
 
 //physics
 const world = new CANNON.World({
@@ -59,7 +83,7 @@ const carDimensions = {
   width: 0.25,
   height: 0.75
 }
-const carBody = new CANNON.Body({
+const carBody = new CustomBody({
   mass: 300,
   shape: new CANNON.Box(new CANNON.Vec3(carDimensions.length, carDimensions.width, carDimensions.height))
 })
@@ -242,15 +266,22 @@ document.addEventListener('keyup', (e) => {
   }
 })
 
+//progress bar
+const progressBar = document.getElementById('progressBar') as HTMLProgressElement
+
 //add skin to car
 let car: any
 const loader = new GLTFLoader()
 loader.load('assets/car/LowPolyCars.glb', (gltf) => {
+  progressBar.style.display = 'none'
   car = gltf.scene
-  car.scale.set(0.9, 0.9, 0.9)
+  car.scale.set(0.82, 0.9, 0.9)
   car.position.set(0, 0, 0)
   car.rotation.set(0, 0, 0)
   scene.add(car)
+}, (xhr) => {
+  const percentComplete = xhr.loaded / xhr.total * 100
+  progressBar.value = percentComplete === Infinity ? 100 : percentComplete
 })
 
 // //load wheel skin
@@ -264,6 +295,66 @@ loader.load('assets/car/LowPolyCars.glb', (gltf) => {
 //     wheels.push(wheel)
 //   }
 // })
+
+//setup playground
+new planeSetup(scene)
+
+//playground for car
+//physics for box
+const boxShape = new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5))
+const boxBody = new CANNON.Body({
+  mass: 10,
+  shape: boxShape
+})
+boxBody.position.set(0, 0.5, 4)
+boxBody.material = new CANNON.Material('boxMaterial')
+const boxGroundContactMaterial = new CANNON.ContactMaterial(boxBody.material, groundBody.material, {
+  friction: 0.9,
+  restitution: 0,
+  contactEquationStiffness: 1000
+})
+world.addBody(boxBody)
+world.addContactMaterial(boxGroundContactMaterial)
+
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+const box = new THREE.Mesh(boxGeometry, boxMaterial)
+box.position.set(0, 0.5, 10)
+scene.add(box)
+
+//bricks
+// // Set up wall position and brick parameters
+// const wallPosition = { x: 15, y: 0, z: 10 };
+// const brickSize = { x: 1, y: 0.5, z: 0.5 };
+// const brickOffset = 0.05;
+// const rows = 4;
+// const columns = 4;
+
+// // Create the bricks wall
+// const bricks = new Bricks(world, scene, groundBody.material, wallPosition, brickSize, brickOffset, rows, columns, 1);
+// bricks.addCollisionListeners(carBody);
+
+// //bricks 2
+// const wallPosition2 = { x: 15, y: 0, z: 20 };
+// const brickSize2 = { x: 1, y: 0.5, z: 0.5 };
+// const brickOffset2 = 0.05;
+// const rows2 = 4;
+// const columns2 = 4;
+
+// const bricks2 = new Bricks(world, scene, groundBody.material, wallPosition2, brickSize2, brickOffset2, rows2, columns2, 2);
+// bricks2.addCollisionListeners(carBody);
+
+let bricksArray: Bricks[] = []
+for (let i = 0; i < 3; i++) {
+  const wallPosition = { x: 20, y: 0, z: 10 + i * 10 };
+  const brickSize = { x: 1, y: 0.5, z: 0.5 };
+  const brickOffset = 0.05;
+  const rows = 4;
+  const columns = 4;
+  const brick = new Bricks(world, scene, groundBody.material, wallPosition, brickSize, brickOffset, rows, columns, i + 1);
+  brick.addCollisionListeners(carBody);
+  bricksArray.push(brick)
+}
 
 //stats
 const stats = new Stats()
@@ -288,6 +379,15 @@ function animate() {
     car.quaternion.copy(carBody.quaternion)
   }
 
+  //update box
+  box.position.copy(boxBody.position)
+  box.quaternion.copy(boxBody.quaternion)
+
+  //update bricks
+  // bricks.update()
+  // bricks2.update()
+  bricksArray.forEach(brick => brick.update())
+
   // if (wheels.length === 4) {
   //   wheelBodies.forEach((wheelBody, index) => {
   //     const wheel = wheels[index]
@@ -297,6 +397,8 @@ function animate() {
   // }
 
   controls.update()
+  controls.target.copy(carBody.position)
+  //TWEEN.update()
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
 

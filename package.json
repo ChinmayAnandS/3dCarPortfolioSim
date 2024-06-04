@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@tweenjs/tween.js": "^23.1.2",
     "@types/dat.gui": "^0.7.13",
     "@types/three": "^0.164.0",
     "cannon-es": "^0.20.0",
