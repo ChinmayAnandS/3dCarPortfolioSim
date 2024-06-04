@@ -4,6 +4,7 @@ import * as CANNON from 'cannon-es'
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { Sky } from 'three/addons/objects/Sky.js'
 
 interface Position {
     x: number;
@@ -47,25 +48,71 @@ export default class planeSetup {
         this.camera = camera;
 
 
-        this.initPlane();
+        // this.initPlane();
         this.addBorder();
         this.addPropsGLTF('/assets/playground/trees/twinTrees.glb', { x: 12, y: 0, z: 12 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 });
-        this.addPropsGLTF('/assets/socials/github.glb', { x: 80, y: 2, z: 15 }, { x: 1, y: 1, z: 1 }, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
-        this.createCannonBody(new CANNON.Cylinder(1.8, 1.8, 1, 8), { x: 80, y: 2, z: 15 }, { x: 0, y: 0, z: 1, angle: Math.PI / 2 }, 0)
-        this.addPropsGLTF('/assets/socials/linkedIn.glb', { x: 80, y: 2, z: 5 }, { x: 1, y: 1, z: 1 }, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
-        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: 80, y: 2, z: 5 }, { x: 0, y: 0, z: 0, angle: 0 }, 0)
-        this.addPropsGLTF('/assets/socials/mail.glb', { x: 80, y: 2, z: -5 }, { x: 1, y: 1, z: 1 }, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
-        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: 80, y: 2, z: -5 }, { x: 0, y: 0, z: 0, angle: 0 }, 0)
-        this.addPropsGLTF('/assets/socials/X.glb', { x: 80, y: 2, z: -15 }, { x: 1, y: 1, z: 1 }, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
-        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: 80, y: 2, z: -15 }, { x: 0, y: 0, z: 0, angle: 0 }, 0)
+
+        this.socialsSetup({ x: 40, y: 2, z: 0 }, { x: 1, y: 1, z: 1 });
         // this.addPropsMTL_OBJ();
+
+        // this.addPropsGLTF('/assets/playground/plane/planetry.glb', { x: 0, y: 1, z: 0 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 });
+        // this.addPropsMTL_OBJ('/assets/playground/plane/untitled', { x: 0, y: 1, z: 0 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 });
+        // const textureLoader = new THREE.TextureLoader();
+        // const texture = textureLoader.load('/assets/playground/plane/planetry.jpg');
+        // const planeGeometry = new THREE.PlaneGeometry(150, 150);
+        // const planeMaterial = new THREE.MeshStandardMaterial({ map: texture });
+        // const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        // plane.rotation.x = -Math.PI / 2;
+        // plane.position.set(0, 0.5, 0);
+        // this.scene.add(plane);
+
+        this.addPropsGLTF('/assets/playground/plane/grndFin3.glb', { x: 0, y: -0.5, z: 0 }, { x: 1, y: 1, z: 1 }, { x: 0, y: Math.PI, z: 0 });
 
         //event listener for mouse click
         this.canvas.addEventListener('click', this.onDocumentMouseClick.bind(this))
+
+        //sky
+        // this.createSky()
+        this.createTexturedSky(this.scene)
+    }
+
+    private createTexturedSky(scene: THREE.Scene) {
+        const loader = new THREE.CubeTextureLoader()
+        const texture = loader.load([
+            '/assets/skybox/px.jpg',
+            '/assets/skybox/nx.jpg',
+            '/assets/skybox/py.jpg',
+            '/assets/skybox/ny.jpg',
+            '/assets/skybox/pz.jpg',
+            '/assets/skybox/nz.jpg',
+        ])
+        scene.background = texture
+    }
+
+    private createSky() {
+        const sky = new Sky();
+        sky.scale.setScalar(450000);
+        const phi = THREE.MathUtils.degToRad(-90);
+        const theta = THREE.MathUtils.degToRad(90);
+        const sunPos = new THREE.Vector3().setFromSphericalCoords(1, phi, theta);
+        sky.material.uniforms.sunPosition.value = sunPos
+
+        this.scene.add(sky)
+    }
+
+    private socialsSetup(position: Position, scale: Scale) {
+        this.addPropsGLTF('/assets/socials/github.glb', { x: position.x, y: position.y, z: position.z }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
+        this.createCannonBody(new CANNON.Cylinder(1.8, 1.8, 1, 8), { x: position.x, y: position.y, z: position.z }, { x: 0, y: 0, z: 1, angle: Math.PI / 2 }, 0);
+        this.addPropsGLTF('/assets/socials/linkedIn.glb', { x: position.x, y: position.y, z: position.z - 10 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
+        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 10 }, { x: 0, y: 0, z: 0, angle: 0 }, 0);
+        this.addPropsGLTF('/assets/socials/mail.glb', { x: position.x, y: position.y, z: position.z - 20 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
+        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 20 }, { x: 0, y: 0, z: 0, angle: 0 }, 0);
+        this.addPropsGLTF('/assets/socials/X.glb', { x: position.x, y: position.y, z: position.z - 30 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
+        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 30 }, { x: 0, y: 0, z: 0, angle: 0 }, 0);
     }
 
     private initPlane() {
-        const planeGeometry = new THREE.PlaneGeometry(200, 200);
+        const planeGeometry = new THREE.PlaneGeometry(125, 125);
         const planeMaterial = new THREE.ShaderMaterial({
             vertexShader: `
                 varying vec2 vUv;
@@ -117,7 +164,7 @@ export default class planeSetup {
 
     private addBorder(): void {
         const borderThickness = 5;
-        const borderLength = 200; // The length of each side of the plane
+        const borderLength = 125; // The length of each side of the plane
 
         const borders = [
             { x: 0, y: -borderThickness / 2, z: -borderLength / 2, sizeX: borderLength, sizeY: borderThickness, sizeZ: borderThickness }, // Top border
@@ -160,7 +207,7 @@ export default class planeSetup {
 
         if (intersects.length > 0) {
             const clickedObject = intersects[0].object;
-            console.log(clickedObject.name.includes('email'))
+            // console.log(clickedObject.name.includes('email'))
             if (clickedObject.name.includes('email')) {
                 window.open('mailto:write2chimbu@gmail.com')
             } else if (clickedObject.name.includes('github')) {

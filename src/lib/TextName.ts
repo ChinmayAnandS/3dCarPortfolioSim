@@ -252,7 +252,7 @@ export default class TextName {
         const halfExtents = new CANNON.Vec3(size.x / 2, size.y / 2 + 0.05, size.z / 2);
         const shape = new CANNON.Box(halfExtents);
         this.body1 = new CANNON.Body({
-            mass: 50,
+            mass: 10,
             position: new CANNON.Vec3(this.model1.position.x, this.model1.position.y + 2, this.model1.position.z),
             material: this.textboxMaterial,
             shape: shape

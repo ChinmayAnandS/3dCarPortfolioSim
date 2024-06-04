@@ -18,6 +18,7 @@ import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import TextName from './lib/TextName'
 import SignBoard from './lib/signBoard'
+import Project from './lib/project'
 
 //scene
 const scene = new THREE.Scene()
@@ -37,8 +38,16 @@ scene.add(axesHelper)
 
 //camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-camera.position.set(0, 3.36, -5)
-const endPosition = { x: -5, y: 3.36, z: 0 }
+camera.position.set(-40, 3.31, -20)
+const endPosition = { x: -62.92, y: 4.71, z: -15.04 }
+
+const camera1 = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+camera1.position.set(0, 0, 0)
+
+const cameraHelper = new THREE.CameraHelper(camera)
+scene.add(cameraHelper)
+const cameraHelper1 = new THREE.CameraHelper(camera1)
+scene.add(cameraHelper1)
 
 // Set up the tween
 const tween = new TWEEN.Tween(camera.position)
@@ -64,6 +73,8 @@ document.body.appendChild(renderer.domElement)
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight
   camera.updateProjectionMatrix()
+  camera1.aspect = window.innerWidth / window.innerHeight
+  camera1.updateProjectionMatrix()
   renderer.setSize(window.innerWidth, window.innerHeight)
 })
 
@@ -73,11 +84,13 @@ controls.enablePan = false
 controls.enableDamping = true
 controls.dampingFactor = 0.1
 controls.enableZoom = true
-controls.maxDistance = 6
+controls.maxDistance = 8
 controls.minDistance = 3
 controls.maxPolarAngle = Math.PI / 3
 controls.minPolarAngle = 0
 controls.cursor = new THREE.Vector3(10, 10, 10)
+
+// controls.target.set(-500, 3.6, -500) //for some reason changing (x and z) values of this line changes the camera position
 
 //physics
 const world = new CANNON.World({
@@ -94,11 +107,17 @@ const carBody = new CustomBody({
   mass: 300,
   shape: new CANNON.Box(new CANNON.Vec3(carDimensions.length, carDimensions.width, carDimensions.height))
 })
-carBody.position.set(-0, 5, 0)
+carBody.position.set(-56, 5, -15)
 carBody.angularVelocity.set(0, -0.5, 0)
 carBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI)
 carBody.angularDamping = 0.1
 // carBody.shapeOffsets[0].set(0, -0.04, 0); // lower the center of mass for better stability
+const additionalBumper = new CANNON.Box(new CANNON.Vec3(0.01, 0.01, 0.75))
+const bumperOffset = new CANNON.Vec3(-1.75, -0.5, 0)
+carBody.addShape(additionalBumper, bumperOffset)
+const additionalBumper2 = new CANNON.Box(new CANNON.Vec3(0.1, 0.2, 0.75))
+const backBumperOffset = new CANNON.Vec3(2, -0.25, 0)
+carBody.addShape(additionalBumper2, backBumperOffset)
 world.addBody(carBody)
 
 //vehicle
@@ -202,7 +221,7 @@ const controller = {
   maxSpeed: 100,
   nosBoost: 1000,
   resetCar: () => {
-    carBody.position.set(0, 5, 0)
+    carBody.position.set(-50, 5, -10)
     // carBody.quaternion.set(0, 0, 0, 1)
     carBody.velocity.set(0, 0, 0)
     carBody.angularVelocity.set(0, -0.5, 0)
@@ -329,7 +348,7 @@ const boxBody = new CANNON.Body({
   mass: 10,
   shape: boxShape
 })
-boxBody.position.set(0, 0.5, 4)
+boxBody.position.set(-0, 0.5, 4)
 boxBody.material = new CANNON.Material('boxMaterial')
 const boxGroundContactMaterial = new CANNON.ContactMaterial(boxBody.material, groundBody.material, {
   friction: 0.9,
@@ -348,7 +367,7 @@ scene.add(box)
 //bricks
 let bricksArray: Bricks[] = []
 for (let i = 0; i < 3; i++) {
-  const wallPosition = { x: 20, y: 0, z: 30 + i * 10 };
+  const wallPosition = { x: -30, y: 0, z: 15 + i * 10 };
   const brickSize = { x: 1, y: 0.5, z: 0.5 };
   const brickOffset = 0.05;
   const rows = 4;
@@ -360,8 +379,8 @@ for (let i = 0; i < 3; i++) {
 
 //bowling
 // Set initial positions and dimensions
-const ballPosition = { x: 40, y: 1, z: 30 };
-const pinsPosition = { x: 40, y: 1, z: 60 };
+const ballPosition = { x: 0, y: 1, z: 10 };
+const pinsPosition = { x: 0, y: 1, z: 35 };
 const ballDimensions = { radius: 1, ballSegments: 32 };
 const pinDimensions = { topRadius: 0.1, bottomRadius: 0.5, height: 2.5, pinSegments: 16 };
 const rows = 4;
@@ -371,44 +390,17 @@ const bowling = new Bowling(scene, world, groundBody.material, ballPosition, pin
 
 
 // rampJump
-const rampPosition = { x: 60, y: 0, z: 30 };
+const rampPosition = { x: 30, y: 0, z: 15 };
 const rampSize = { width: 5, height: 1, depth: 5 };
 const rampAngle = { x: 1, y: 0, z: 0, angle: -Math.PI / 6 };
 new Rampjump(scene, world, rampPosition, rampSize, rampAngle)
 
 //create text
-const textName = new TextName(scene, groundBody.material, world, { x: 10, y: 1, z: -3 })
+const textName = new TextName(scene, groundBody.material, world, { x: -45, y: 1, z: -18 })
 
-new SignBoard(scene, world, { x: 20, y: 1, z: 0 }, { length: 1, width: 1, height: 1 })
+new SignBoard(scene, world, { x: -40, y: 0, z: -5 })
 
-//create cylinder
-// const cylinder = new CANNON.Cylinder(1, 1, 1, 32)
-// const cylinderBody = new CANNON.Body({
-//   mass: 1,
-//   shape: cylinder
-// })
-// cylinderBody.material = new CANNON.Material('cylinder')
-// cylinderBody.position.set(5, 1, 5)
-// world.addBody(cylinderBody)
-// const cylinderGroundContactMaterial = new CANNON.ContactMaterial(cylinderBody.material, groundBody.material, {
-//   friction: 0.9,
-//   restitution: 0,
-//   contactEquationStiffness: 1000
-// })
-// world.addContactMaterial(cylinderGroundContactMaterial)
-
-// const mtlLoader = new MTLLoader()
-// const objLoader = new OBJLoader()
-// let cylinderMesh: any
-// mtlLoader.setPath('/assets/playground/bowling/').load('bowlingPin.mtl', (materials) => {
-//   materials.preload()
-//   objLoader.setMaterials(materials)
-//     .setPath('/assets/playground/bowling/').load('bowlingPin.obj', (object) => {
-//       object.position.set(5, 0, 5)
-//       object.scale.setScalar(0.5)
-//       scene.add(object)
-//     })
-// })
+new Project(scene, world, { x: -35, y: 0, z: -45 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 })
 
 //stats
 const stats = new Stats()
@@ -461,11 +453,27 @@ function animate() {
     })
   }
 
-  controls.update()
-  controls.target.copy(carBody.position)
+  const useSecondCamera = car && car.position.z < -22.5
+
+  if (useSecondCamera) {
+    // console.log('car entered projects area')
+    //change orbital controls
+    camera1.position.set(car.position.x - 8, car.position.y + 5, car.position.z + 5)
+    camera1.lookAt(car.position)
+
+  } else {
+    controls.target.copy(carBody.position)
+    controls.maxPolarAngle = Math.PI / 3
+    controls.maxDistance = 8
+    controls.minDistance = 3
+    controls.update()
+  }
+
+  // controls.target.copy(carBody.position)
   TWEEN.update()
-  renderer.render(scene, camera)
+  renderer.render(scene, useSecondCamera ? camera1 : camera)
   requestAnimationFrame(animate)
+  // console.log(camera.position)
 
   stats.update()
 }
