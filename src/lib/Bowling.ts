@@ -1,13 +1,29 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-// import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+
+import AddPropGLTF from '../util/addPropGLTF';
+import AddCannonBox from '../util/addCannonBox';
 
 interface Position {
     x: number;
     y: number;
     z: number;
+}
+
+interface Scale {
+    x: number;
+    y: number;
+    z: number;
+}
+
+interface Rotation {
+    x: number;
+    y: number;
+    z: number;
+    angle: number;
 }
 
 interface BallDimensions {
@@ -32,7 +48,7 @@ export default class Bowling {
     private pinBodies: CANNON.Body[] = [];
     private ballPhysicsMaterial: CANNON.Material;
     private pinPhysicsMaterial: CANNON.Material;
-    // private GLTFloader: GLTFLoader;
+    private GLTFloader: GLTFLoader;
     private MTLLoader: MTLLoader;
     private OBJLoader: OBJLoader;
     private ballMesh!: THREE.Object3D;
@@ -48,7 +64,7 @@ export default class Bowling {
         this.ballPosition = ballPosition;
         this.pinsPosition = pinsPosition;
         this.rows = rows;
-        // this.GLTFloader = new GLTFLoader();
+        this.GLTFloader = new GLTFLoader();
         this.MTLLoader = new MTLLoader();
         this.OBJLoader = new OBJLoader();
         this.ballRadius = ballRadius.radius;
@@ -86,19 +102,36 @@ export default class Bowling {
     }
 
     private initBowling(): void {
+        let offset = 4;
         this.loadModels();
+        // this.loadMultipleFence('/assets/playground/bowling/fence1.glb', 10, { x: this.ballPosition.x - offset, y: 0, z: this.ballPosition.z - 1 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 }, 4.25, 'z');
+        // this.loadMultipleFence('/assets/playground/bowling/fence1.glb', 10, { x: this.ballPosition.x + offset, y: 0, z: this.ballPosition.z - 1 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 }, 4.25, 'z');
+        // this.loadMultipleFence('/assets/playground/bowling/fence2.glb', 4, { x: this.ballPosition.x - offset + 1, y: 0, z: this.pinsPosition.z + (2 * offset) + 1.25 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0, angle: 0 }, 2, 'x');
+        AddPropGLTF(this.scene, { x: this.ballPosition.x, y: 0, z: this.ballPosition.z + 20 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 }, '/assets/playground/bowling/fenceStructure.glb');
+        //add cannon box for sequence of fence
+        AddCannonBox(this.world, { x: this.ballPosition.x - offset, y: 0, z: this.ballPosition.z + 18 }, { x: 42, y: 2.5, z: 0.3 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 });
+        AddCannonBox(this.world, { x: this.ballPosition.x + offset, y: 0, z: this.ballPosition.z + 18 }, { x: 42, y: 2.5, z: 0.3 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 });
+        AddCannonBox(this.world, { x: this.ballPosition.x, y: 0, z: this.pinsPosition.z + (2 * offset) + 1.5 }, { x: 0.3, y: 2.5, z: 8 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 });
     }
 
+    //refer https://sbcode.net/threejs/convexgeometry/ for creating covex hull for pins and correct import of MTLLoader and OBJLoader
     private loadModels(): void {
-        this.MTLLoader.load('/assets/playground/bowling/bowlingBall.mtl', (materials) => {
-            materials.preload();
-            this.OBJLoader.setMaterials(materials);
-            this.OBJLoader.load('/assets/playground/bowling/bowlingBall.obj', (object) => {
-                this.ballMesh = object;
-                this.ballMesh.scale.set(1, 1, 1);
-                this.setupBall();
-                this.checkModelLoaded();
-            });
+        // this.MTLLoader.load('/assets/playground/bowling/bowlingBall.mtl', (materials) => {
+        //     materials.preload();
+        //     this.OBJLoader.setMaterials(materials);
+        //     this.OBJLoader.load('/assets/playground/bowling/bowlingBall.obj', (object) => {
+        //         this.ballMesh = object;
+        //         this.ballMesh.scale.set(1, 1, 1);
+        //         this.setupBall();
+        //         this.checkModelLoaded();
+        //     });
+        // });
+        this.GLTFloader.load('/assets/playground/bowling/bowlingBall.glb', (gltf) => {
+            const ballMesh = gltf.scene;
+            ballMesh.scale.set(1, 1, 1);
+            this.ballMesh = ballMesh;
+            this.setupBall();
+            this.checkModelLoaded();
         });
 
         this.MTLLoader.setPath('/assets/playground/bowling/').load('bowlingPin.mtl', (materials) => {
@@ -155,7 +188,7 @@ export default class Bowling {
     private createPin(x: number, y: number, z: number): void {
         const pinMesh = this.pinMesh.clone();
         pinMesh.position.set(x, 0, z);
-        console.log(pinMesh.position.x, pinMesh.position.y, pinMesh.position.z)
+        // console.log(pinMesh.position.x, pinMesh.position.y, pinMesh.position.z)
         this.scene.add(pinMesh);
 
         const pinShape = new CANNON.Cylinder(this.pinDim.topRadius, this.pinDim.bottomRadius, this.pinDim.height, this.pinDim.pinSegments);
@@ -167,6 +200,14 @@ export default class Bowling {
         this.pins.push(pinMesh);
         this.pinBodies.push(pinBody);
     }
+
+    // private loadMultipleFence(path: string, count: number, startPosition: Position, scale: Scale, rotation: Rotation, spacing: number, axis: 'x' | 'y' | 'z'): void {
+    //     for (let i = 0; i < count; i++) {
+    //         const position = { ...startPosition };
+    //         position[axis] += i * spacing;
+    //         AddPropGLTF(this.scene, position, scale, rotation, path);
+    //     }
+    // }
 
     public update(): void {
         if (!this.modelsLoaded) return;

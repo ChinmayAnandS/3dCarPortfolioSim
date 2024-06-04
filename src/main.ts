@@ -12,8 +12,12 @@ import { GUI } from 'dat.gui'
 import Bricks from './lib/Bricks'
 import { CustomBody } from './lib/CustomBody'
 import Bowling from './lib/Bowling'
+import Rampjump from './lib/Rampjump'
+// import TextName, { FontName, TextNameOptions } from './lib/TextName'
 import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import TextName from './lib/TextName'
+import SignBoard from './lib/signBoard'
 
 //scene
 const scene = new THREE.Scene()
@@ -33,8 +37,8 @@ scene.add(axesHelper)
 
 //camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-camera.position.set(8, 3, 0)
-const endPosition = { x: 4.5, y: 3.36, z: -2.15 }
+camera.position.set(0, 3.36, -5)
+const endPosition = { x: -5, y: 3.36, z: 0 }
 
 // Set up the tween
 const tween = new TWEEN.Tween(camera.position)
@@ -71,7 +75,7 @@ controls.dampingFactor = 0.1
 controls.enableZoom = true
 controls.maxDistance = 6
 controls.minDistance = 3
-controls.maxPolarAngle = Math.PI / 2.5
+controls.maxPolarAngle = Math.PI / 3
 controls.minPolarAngle = 0
 controls.cursor = new THREE.Vector3(10, 10, 10)
 
@@ -82,7 +86,7 @@ const world = new CANNON.World({
 
 //create car chassis
 const carDimensions = {
-  length: 1.45,
+  length: 1.7,
   width: 0.25,
   height: 0.75
 }
@@ -90,9 +94,11 @@ const carBody = new CustomBody({
   mass: 300,
   shape: new CANNON.Box(new CANNON.Vec3(carDimensions.length, carDimensions.width, carDimensions.height))
 })
-carBody.position.set(0, 5, 0)
-carBody.angularVelocity.set(0, 0.5, 0)
+carBody.position.set(-0, 5, 0)
+carBody.angularVelocity.set(0, -0.5, 0)
+carBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI)
 carBody.angularDamping = 0.1
+// carBody.shapeOffsets[0].set(0, -0.04, 0); // lower the center of mass for better stability
 world.addBody(carBody)
 
 //vehicle
@@ -105,7 +111,7 @@ const vehicle = new CANNON.RaycastVehicle({
 
 //wheel options
 const wheelOptions = {
-  radius: 0.25,
+  radius: 0.3,
   directionLocal: new CANNON.Vec3(0, -1, 0),
   suspensionStiffness: 30,
   suspensionRestLength: 0.3,
@@ -123,13 +129,13 @@ const wheelOptions = {
 }
 
 //set connection points for wheels
-wheelOptions.chassisConnectionPointLocal.set(-carDimensions.length + 0.45, 0, carDimensions.height)
+wheelOptions.chassisConnectionPointLocal.set(-carDimensions.length + 0.47, -0.2, carDimensions.height)
 vehicle.addWheel(wheelOptions)
-wheelOptions.chassisConnectionPointLocal.set(-carDimensions.length + 0.45, 0, -carDimensions.height)
+wheelOptions.chassisConnectionPointLocal.set(-carDimensions.length + 0.47, -0.2, -carDimensions.height)
 vehicle.addWheel(wheelOptions)
-wheelOptions.chassisConnectionPointLocal.set(carDimensions.length - 0.45, 0, carDimensions.height)
+wheelOptions.chassisConnectionPointLocal.set(carDimensions.length - 0.7, -0.2, carDimensions.height)
 vehicle.addWheel(wheelOptions)
-wheelOptions.chassisConnectionPointLocal.set(carDimensions.length - 0.45, 0, -carDimensions.height)
+wheelOptions.chassisConnectionPointLocal.set(carDimensions.length - 0.7, -0.2, -carDimensions.height)
 vehicle.addWheel(wheelOptions)
 
 //add vehicle to world
@@ -138,7 +144,7 @@ vehicle.addToWorld(world)
 //add the wheel bodies
 const wheelBodies: any[] = []
 const wheelMaterial = new CANNON.Material('wheel')
-vehicle.wheelInfos.forEach((wheel) => {
+vehicle.wheelInfos.forEach((wheel, index) => {
   const cylinder = new CANNON.Cylinder(wheel.radius, wheel.radius, wheel.radius, wheelOptions.segments)
   const wheelBody = new CANNON.Body({
     mass: 0,
@@ -180,7 +186,7 @@ world.addBody(groundBody)
 
 //define interaction between wheels and ground
 const wheelGroundContactMaterial = new CANNON.ContactMaterial(wheelMaterial, groundBody.material, {
-  friction: 1.3,
+  friction: 10,
   restitution: 0,
   contactEquationStiffness: 1000
 })
@@ -197,9 +203,10 @@ const controller = {
   nosBoost: 1000,
   resetCar: () => {
     carBody.position.set(0, 5, 0)
-    carBody.quaternion.set(0, 0, 0, 1)
+    // carBody.quaternion.set(0, 0, 0, 1)
     carBody.velocity.set(0, 0, 0)
-    carBody.angularVelocity.set(0, 0.5, 0)
+    carBody.angularVelocity.set(0, -0.5, 0)
+    carBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI)
   }
 }
 
@@ -227,8 +234,8 @@ document.addEventListener('keydown', (e) => {
       vehicle.setSteeringValue(-controller.maxSteerVal, 1)
       break
     case ' ':
-      vehicle.setBrake(controller.brakeForce, 0)
-      vehicle.setBrake(controller.brakeForce, 1)
+      // vehicle.setBrake(controller.brakeForce, 0)
+      // vehicle.setBrake(controller.brakeForce, 1)
       vehicle.setBrake(controller.brakeForce, 2)
       vehicle.setBrake(controller.brakeForce, 3)
       break
@@ -275,32 +282,45 @@ const progressBar = document.getElementById('progressBar') as HTMLProgressElemen
 //add skin to car
 let car: any
 const loader = new GLTFLoader()
-loader.load('assets/car/LowPolyCars.glb', (gltf) => {
+loader.load('assets/car/LowPolyCars2.glb', (gltf) => {
   progressBar.style.display = 'none'
   car = gltf.scene
-  car.scale.set(0.82, 0.9, 0.9)
-  car.position.set(0, 0, 0)
-  car.rotation.set(0, 0, 0)
+  car.scale.set(1, 1, 1)
+  // car.quaternion.setFromEuler(0, 0, 0)
+  // car.position.set(0, 0, 0)
+  // car.rotation.set(180, 0, 0)
   scene.add(car)
 }, (xhr) => {
   const percentComplete = xhr.loaded / xhr.total * 100
   progressBar.value = percentComplete === Infinity ? 100 : percentComplete
 })
 
-// //load wheel skin
-// let wheels: any[] = []
-// const wheelLoader = new GLTFLoader()
-// wheelLoader.load('assets/car/carWheel.glb', (gltf) => {
-//   const wheelModel = gltf.scene
-//   for (let i = 0; i < 4; i++) {
-//     const wheel = wheelModel.clone()
-//     scene.add(wheel)
-//     wheels.push(wheel)
-//   }
-// })
+//load wheel skin
+let wheels: any[] = []
+const wheelLoader = new GLTFLoader()
+wheelLoader.load('assets/car/carWheel1.glb', (gltf) => {
+  const wheelModel = gltf.scene
+  for (let i = 0; i < 4; i++) {
+    if (i === 1 || i === 3) continue
+    let wheel = wheelModel.clone()
+    scene.add(wheel)
+    wheels[i] = wheel
+  }
+})
+
+wheelLoader.load('assets/car/carWheel.glb', (gltf) => {
+  const wheelModel = gltf.scene
+  for (let i = 0; i < 4; i++) {
+    if (i === 0 || i === 2) continue
+    let wheel = wheelModel.clone()
+    scene.add(wheel)
+    wheels[i] = wheel
+  }
+  console.log(wheels)
+})
 
 //setup playground
-new planeSetup(scene)
+new planeSetup(scene, world, groundBody.material, camera, renderer.domElement)
 
 //playground for car
 //physics for box
@@ -328,7 +348,7 @@ scene.add(box)
 //bricks
 let bricksArray: Bricks[] = []
 for (let i = 0; i < 3; i++) {
-  const wallPosition = { x: 20, y: 0, z: 10 + i * 10 };
+  const wallPosition = { x: 20, y: 0, z: 30 + i * 10 };
   const brickSize = { x: 1, y: 0.5, z: 0.5 };
   const brickOffset = 0.05;
   const rows = 4;
@@ -340,15 +360,26 @@ for (let i = 0; i < 3; i++) {
 
 //bowling
 // Set initial positions and dimensions
-const ballPosition = { x: 40, y: 1, z: 10 };
-const pinsPosition = { x: 40, y: 1, z: 40 };
+const ballPosition = { x: 40, y: 1, z: 30 };
+const pinsPosition = { x: 40, y: 1, z: 60 };
 const ballDimensions = { radius: 1, ballSegments: 32 };
-const pinDimensions = { topRadius: 0.2, bottomRadius: 0.4, height: 2.5, pinSegments: 32 };
+const pinDimensions = { topRadius: 0.1, bottomRadius: 0.5, height: 2.5, pinSegments: 16 };
 const rows = 4;
 
 // Create Bowling instance
 const bowling = new Bowling(scene, world, groundBody.material, ballPosition, pinsPosition, ballDimensions, pinDimensions, rows);
 
+
+// rampJump
+const rampPosition = { x: 60, y: 0, z: 30 };
+const rampSize = { width: 5, height: 1, depth: 5 };
+const rampAngle = { x: 1, y: 0, z: 0, angle: -Math.PI / 6 };
+new Rampjump(scene, world, rampPosition, rampSize, rampAngle)
+
+//create text
+const textName = new TextName(scene, groundBody.material, world, { x: 10, y: 1, z: -3 })
+
+new SignBoard(scene, world, { x: 20, y: 1, z: 0 }, { length: 1, width: 1, height: 1 })
 
 //create cylinder
 // const cylinder = new CANNON.Cylinder(1, 1, 1, 32)
@@ -398,8 +429,9 @@ function animate() {
   cannonDebugger.update()
 
   if (car) {
-    car.position.set(carBody.position.x, carBody.position.y - 0.5, carBody.position.z)
+    car.position.set(carBody.position.x, carBody.position.y, carBody.position.z)
     car.quaternion.copy(carBody.quaternion)
+    // console.log('car', car.position)
   }
 
   //update box
@@ -412,18 +444,22 @@ function animate() {
   //update bowling
   bowling.update()
 
+  //update textName
+  textName.updateTextPhysics()
+
   //update cylinder
   // if (cylinderMesh) {
   //   cylinderMesh.position.copy(cylinderBody.position)
   //   cylinderMesh.quaternion.copy(cylinderBody.quaternion)
   // }
-  // if (wheels.length === 4) {
-  //   wheelBodies.forEach((wheelBody, index) => {
-  //     const wheel = wheels[index]
-  //     wheel.position.copy(wheelBody.position)
-  //     wheel.quaternion.copy(wheelBody.quaternion)
-  //   })
-  // }
+
+  if (wheels.length === 4 && wheelBodies.length === 4) {
+    wheelBodies.forEach((wheelBody, index) => {
+      const wheel = wheels[index]
+      wheel.position.copy(wheelBody.position)
+      wheel.quaternion.copy(wheelBody.quaternion)
+    })
+  }
 
   controls.update()
   controls.target.copy(carBody.position)
