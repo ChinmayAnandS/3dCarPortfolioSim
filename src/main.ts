@@ -11,6 +11,9 @@ import planeSetup from './lib/planeSetup'
 import { GUI } from 'dat.gui'
 import Bricks from './lib/Bricks'
 import { CustomBody } from './lib/CustomBody'
+import Bowling from './lib/Bowling'
+import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 
 //scene
 const scene = new THREE.Scene()
@@ -68,7 +71,7 @@ controls.dampingFactor = 0.1
 controls.enableZoom = true
 controls.maxDistance = 6
 controls.minDistance = 3
-controls.maxPolarAngle = Math.PI / 3
+controls.maxPolarAngle = Math.PI / 2.5
 controls.minPolarAngle = 0
 controls.cursor = new THREE.Vector3(10, 10, 10)
 
@@ -177,7 +180,7 @@ world.addBody(groundBody)
 
 //define interaction between wheels and ground
 const wheelGroundContactMaterial = new CANNON.ContactMaterial(wheelMaterial, groundBody.material, {
-  friction: 0.3,
+  friction: 1.3,
   restitution: 0,
   contactEquationStiffness: 1000
 })
@@ -323,27 +326,6 @@ box.position.set(0, 0.5, 10)
 scene.add(box)
 
 //bricks
-// // Set up wall position and brick parameters
-// const wallPosition = { x: 15, y: 0, z: 10 };
-// const brickSize = { x: 1, y: 0.5, z: 0.5 };
-// const brickOffset = 0.05;
-// const rows = 4;
-// const columns = 4;
-
-// // Create the bricks wall
-// const bricks = new Bricks(world, scene, groundBody.material, wallPosition, brickSize, brickOffset, rows, columns, 1);
-// bricks.addCollisionListeners(carBody);
-
-// //bricks 2
-// const wallPosition2 = { x: 15, y: 0, z: 20 };
-// const brickSize2 = { x: 1, y: 0.5, z: 0.5 };
-// const brickOffset2 = 0.05;
-// const rows2 = 4;
-// const columns2 = 4;
-
-// const bricks2 = new Bricks(world, scene, groundBody.material, wallPosition2, brickSize2, brickOffset2, rows2, columns2, 2);
-// bricks2.addCollisionListeners(carBody);
-
 let bricksArray: Bricks[] = []
 for (let i = 0; i < 3; i++) {
   const wallPosition = { x: 20, y: 0, z: 10 + i * 10 };
@@ -355,6 +337,47 @@ for (let i = 0; i < 3; i++) {
   brick.addCollisionListeners(carBody);
   bricksArray.push(brick)
 }
+
+//bowling
+// Set initial positions and dimensions
+const ballPosition = { x: 40, y: 1, z: 10 };
+const pinsPosition = { x: 40, y: 1, z: 40 };
+const ballDimensions = { radius: 1, ballSegments: 32 };
+const pinDimensions = { topRadius: 0.2, bottomRadius: 0.4, height: 2.5, pinSegments: 32 };
+const rows = 4;
+
+// Create Bowling instance
+const bowling = new Bowling(scene, world, groundBody.material, ballPosition, pinsPosition, ballDimensions, pinDimensions, rows);
+
+
+//create cylinder
+// const cylinder = new CANNON.Cylinder(1, 1, 1, 32)
+// const cylinderBody = new CANNON.Body({
+//   mass: 1,
+//   shape: cylinder
+// })
+// cylinderBody.material = new CANNON.Material('cylinder')
+// cylinderBody.position.set(5, 1, 5)
+// world.addBody(cylinderBody)
+// const cylinderGroundContactMaterial = new CANNON.ContactMaterial(cylinderBody.material, groundBody.material, {
+//   friction: 0.9,
+//   restitution: 0,
+//   contactEquationStiffness: 1000
+// })
+// world.addContactMaterial(cylinderGroundContactMaterial)
+
+// const mtlLoader = new MTLLoader()
+// const objLoader = new OBJLoader()
+// let cylinderMesh: any
+// mtlLoader.setPath('/assets/playground/bowling/').load('bowlingPin.mtl', (materials) => {
+//   materials.preload()
+//   objLoader.setMaterials(materials)
+//     .setPath('/assets/playground/bowling/').load('bowlingPin.obj', (object) => {
+//       object.position.set(5, 0, 5)
+//       object.scale.setScalar(0.5)
+//       scene.add(object)
+//     })
+// })
 
 //stats
 const stats = new Stats()
@@ -384,10 +407,16 @@ function animate() {
   box.quaternion.copy(boxBody.quaternion)
 
   //update bricks
-  // bricks.update()
-  // bricks2.update()
   bricksArray.forEach(brick => brick.update())
 
+  //update bowling
+  bowling.update()
+
+  //update cylinder
+  // if (cylinderMesh) {
+  //   cylinderMesh.position.copy(cylinderBody.position)
+  //   cylinderMesh.quaternion.copy(cylinderBody.quaternion)
+  // }
   // if (wheels.length === 4) {
   //   wheelBodies.forEach((wheelBody, index) => {
   //     const wheel = wheels[index]
@@ -398,7 +427,7 @@ function animate() {
 
   controls.update()
   controls.target.copy(carBody.position)
-  //TWEEN.update()
+  TWEEN.update()
   renderer.render(scene, camera)
   requestAnimationFrame(animate)
 
