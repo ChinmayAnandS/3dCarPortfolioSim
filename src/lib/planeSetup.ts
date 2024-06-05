@@ -37,6 +37,8 @@ export default class planeSetup {
     private raycaster: THREE.Raycaster;
     private clickables: THREE.Object3D[] = [];
     private carBody!: CANNON.Body;
+    private lastOpenedTime: number = 0;
+    private cooldown: number = 5000;
 
 
     constructor(scene: THREE.Scene, world: CANNON.World, groundBodyMaterial: CANNON.Material, camera: THREE.Camera, canvas: HTMLCanvasElement, carBody: CANNON.Body) {
@@ -215,9 +217,15 @@ export default class planeSetup {
     }
 
     private handleCollision(e: any, name: string): void {
+        let currentTime = Date.now();
+        if (currentTime - this.lastOpenedTime < this.cooldown) {
+            return;
+        }
         const bodyA = e.body;
         const bodyB = e.target;
         if (bodyA === this.carBody || bodyB === this.carBody) {
+            this.lastOpenedTime = currentTime;
+            console.log(this.lastOpenedTime)
             if (name === 'email') {
                 window.open('mailto:write2chimbu@gmail.com');
             } else if (name === 'github') {
