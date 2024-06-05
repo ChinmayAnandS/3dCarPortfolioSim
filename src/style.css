@@ -1,0 +1,15 @@
+body {
+  overflow: hidden;
+  margin: 0;
+  user-select: none;
+}
+
+#progressBar {
+  width: 500px;
+  height: 24px;
+  position: absolute;
+  left: 50%;
+  top: 450px;
+  margin-left: -250px;
+}
+
