@@ -304,7 +304,7 @@ const progressBar = document.getElementById('progressBar') as HTMLProgressElemen
 //add skin to car
 let car: any
 const loader = new GLTFLoader()
-loader.load('assets/car/LowPolyCar3.glb', (gltf) => {
+loader.load('./assets/car/LowPolyCar3.glb', (gltf) => {
   progressBar.style.display = 'none'
   car = gltf.scene
   car.scale.set(1, 1, 1)
@@ -320,7 +320,7 @@ loader.load('assets/car/LowPolyCar3.glb', (gltf) => {
 //load wheel skin
 let wheels: any[] = []
 const wheelLoader = new GLTFLoader()
-wheelLoader.load('assets/car/carWheel3.glb', (gltf) => {
+wheelLoader.load('./assets/car/carWheel3.glb', (gltf) => {
   const wheelModel = gltf.scene
   for (let i = 0; i < 4; i++) {
     if (i === 1 || i === 3) continue
@@ -330,7 +330,7 @@ wheelLoader.load('assets/car/carWheel3.glb', (gltf) => {
   }
 })
 
-wheelLoader.load('assets/car/carWheel2.glb', (gltf) => {
+wheelLoader.load('./assets/car/carWheel2.glb', (gltf) => {
   const wheelModel = gltf.scene
   for (let i = 0; i < 4; i++) {
     if (i === 0 || i === 2) continue

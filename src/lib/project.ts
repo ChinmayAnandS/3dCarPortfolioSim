@@ -47,7 +47,7 @@ export default class Project {
 
     init() {
         // console.log('Project initialized');
-        addPropGLTF(this.scene, this.position, { x: 1, y: 1, z: 1 }, this.rotation, '/assets/project/projectBanner.glb');
+        addPropGLTF(this.scene, this.position, { x: 1, y: 1, z: 1 }, this.rotation, './assets/project/projectBanner.glb');
         this.addPhotoToBanner()
         window.addEventListener('click', this.onDocumentMouseClick.bind(this), false);
         window.addEventListener('click', this.onDocumentMouseClick1.bind(this), false);

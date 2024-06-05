@@ -50,15 +50,15 @@ export default class planeSetup {
 
         // this.initPlane();
         this.addBorder();
-        this.addPropsGLTF('/assets/playground/trees/twinTrees.glb', { x: 17.5, y: 0, z: 15 }, { x: 1, y: 1, z: 1 }, { x: 0, y: Math.PI / 2, z: 0 });
+        this.addPropsGLTF('./assets/playground/trees/twinTrees.glb', { x: 17.5, y: 0, z: 15 }, { x: 1, y: 1, z: 1 }, { x: 0, y: Math.PI / 2, z: 0 });
 
         this.socialsSetup({ x: 40, y: 2, z: 0 }, { x: 1, y: 1, z: 1 });
         // this.addPropsMTL_OBJ();
 
-        // this.addPropsGLTF('/assets/playground/plane/planetry.glb', { x: 0, y: 1, z: 0 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 });
-        // this.addPropsMTL_OBJ('/assets/playground/plane/untitled', { x: 0, y: 1, z: 0 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 });
+        // this.addPropsGLTF('./assets/playground/plane/planetry.glb', { x: 0, y: 1, z: 0 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 });
+        // this.addPropsMTL_OBJ('./assets/playground/plane/untitled', { x: 0, y: 1, z: 0 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0 });
         // const textureLoader = new THREE.TextureLoader();
-        // const texture = textureLoader.load('/assets/playground/plane/planetry.jpg');
+        // const texture = textureLoader.load('./assets/playground/plane/planetry.jpg');
         // const planeGeometry = new THREE.PlaneGeometry(150, 150);
         // const planeMaterial = new THREE.MeshStandardMaterial({ map: texture });
         // const plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -66,7 +66,7 @@ export default class planeSetup {
         // plane.position.set(0, 0.5, 0);
         // this.scene.add(plane);
 
-        this.addPropsGLTF('/assets/playground/plane/grndFin3.glb', { x: 0, y: -0.5, z: 0 }, { x: 1, y: 1, z: 1 }, { x: 0, y: Math.PI, z: 0 });
+        this.addPropsGLTF('./assets/playground/plane/grndFin3.glb', { x: 0, y: -0.5, z: 0 }, { x: 1, y: 1, z: 1 }, { x: 0, y: Math.PI, z: 0 });
 
         //event listener for mouse click
         this.canvas.addEventListener('click', this.onDocumentMouseClick.bind(this))
@@ -93,12 +93,12 @@ export default class planeSetup {
     private createTexturedSky(scene: THREE.Scene) {
         const loader = new THREE.CubeTextureLoader()
         const texture = loader.load([
-            '/assets/skybox/px.jpg',
-            '/assets/skybox/nx.jpg',
-            '/assets/skybox/py.jpg',
-            '/assets/skybox/ny.jpg',
-            '/assets/skybox/pz.jpg',
-            '/assets/skybox/nz.jpg',
+            './assets/skybox/px.jpg',
+            './assets/skybox/nx.jpg',
+            './assets/skybox/py.jpg',
+            './assets/skybox/ny.jpg',
+            './assets/skybox/pz.jpg',
+            './assets/skybox/nz.jpg',
         ])
         scene.background = texture
     }
@@ -115,13 +115,13 @@ export default class planeSetup {
     // }
 
     private socialsSetup(position: Position, scale: Scale) {
-        this.addPropsGLTF('/assets/socials/github.glb', { x: position.x, y: position.y, z: position.z }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
+        this.addPropsGLTF('./assets/socials/github.glb', { x: position.x, y: position.y, z: position.z }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
         this.createCannonBody(new CANNON.Cylinder(1.8, 1.8, 1, 8), { x: position.x, y: position.y, z: position.z }, { x: 0, y: 0, z: 1, angle: Math.PI / 2 }, 0);
-        this.addPropsGLTF('/assets/socials/linkedIn.glb', { x: position.x, y: position.y, z: position.z - 10 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
+        this.addPropsGLTF('./assets/socials/linkedIn.glb', { x: position.x, y: position.y, z: position.z - 10 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
         this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 10 }, { x: 0, y: 0, z: 0, angle: 0 }, 0);
-        this.addPropsGLTF('/assets/socials/mail.glb', { x: position.x, y: position.y, z: position.z - 20 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
+        this.addPropsGLTF('./assets/socials/mail.glb', { x: position.x, y: position.y, z: position.z - 20 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
         this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 20 }, { x: 0, y: 0, z: 0, angle: 0 }, 0);
-        this.addPropsGLTF('/assets/socials/X.glb', { x: position.x, y: position.y, z: position.z - 30 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
+        this.addPropsGLTF('./assets/socials/X.glb', { x: position.x, y: position.y, z: position.z - 30 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
         this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 30 }, { x: 0, y: 0, z: 0, angle: 0 }, 0);
     }
 

@@ -12,7 +12,7 @@ export default class SignBoard {
     constructor(scene: THREE.Scene, world: CANNON.World, signPosition: Position) {
         const loader = new GLTFLoader();
 
-        loader.load('/assets/playground/signBoard/playgroundBoard.glb', (gltf) => {
+        loader.load('./assets/playground/signBoard/playgroundBoard.glb', (gltf) => {
             const signMesh = gltf.scene;
             signMesh.scale.set(1, 1, 1);
             signMesh.rotation.y = Math.PI / 2;
@@ -20,7 +20,7 @@ export default class SignBoard {
             scene.add(signMesh);
         });
 
-        loader.load('/assets/playground/signBoard/projectsBoard.glb', (gltf) => {
+        loader.load('./assets/playground/signBoard/projectsBoard.glb', (gltf) => {
             const signMesh = gltf.scene;
             signMesh.scale.set(1, 1, 1);
             signMesh.rotation.y = Math.PI / 2;
@@ -28,7 +28,7 @@ export default class SignBoard {
             scene.add(signMesh);
         })
 
-        loader.load('/assets/playground/signBoard/socialsBoard1.glb', (gltf) => {
+        loader.load('./assets/playground/signBoard/socialsBoard1.glb', (gltf) => {
             const signMesh = gltf.scene;
             signMesh.scale.set(1, 1, 1);
             signMesh.rotation.y = Math.PI / 2;

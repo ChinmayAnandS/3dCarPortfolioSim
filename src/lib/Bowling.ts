@@ -104,10 +104,10 @@ export default class Bowling {
     private initBowling(): void {
         let offset = 4;
         this.loadModels();
-        // this.loadMultipleFence('/assets/playground/bowling/fence1.glb', 10, { x: this.ballPosition.x - offset, y: 0, z: this.ballPosition.z - 1 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 }, 4.25, 'z');
-        // this.loadMultipleFence('/assets/playground/bowling/fence1.glb', 10, { x: this.ballPosition.x + offset, y: 0, z: this.ballPosition.z - 1 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 }, 4.25, 'z');
-        // this.loadMultipleFence('/assets/playground/bowling/fence2.glb', 4, { x: this.ballPosition.x - offset + 1, y: 0, z: this.pinsPosition.z + (2 * offset) + 1.25 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0, angle: 0 }, 2, 'x');
-        AddPropGLTF(this.scene, { x: this.ballPosition.x, y: 0, z: this.ballPosition.z + 20 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 }, '/assets/playground/bowling/fenceStructure.glb');
+        // this.loadMultipleFence('./assets/playground/bowling/fence1.glb', 10, { x: this.ballPosition.x - offset, y: 0, z: this.ballPosition.z - 1 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 }, 4.25, 'z');
+        // this.loadMultipleFence('./assets/playground/bowling/fence1.glb', 10, { x: this.ballPosition.x + offset, y: 0, z: this.ballPosition.z - 1 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 }, 4.25, 'z');
+        // this.loadMultipleFence('./assets/playground/bowling/fence2.glb', 4, { x: this.ballPosition.x - offset + 1, y: 0, z: this.pinsPosition.z + (2 * offset) + 1.25 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 0, z: 0, angle: 0 }, 2, 'x');
+        AddPropGLTF(this.scene, { x: this.ballPosition.x, y: 0, z: this.ballPosition.z + 20 }, { x: 1, y: 1, z: 1 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 }, './assets/playground/bowling/fenceStructure.glb');
         //add cannon box for sequence of fence
         AddCannonBox(this.world, { x: this.ballPosition.x - offset, y: 0, z: this.ballPosition.z + 18.5 }, { x: 35, y: 2.5, z: 0.3 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 });
         AddCannonBox(this.world, { x: this.ballPosition.x + offset, y: 0, z: this.ballPosition.z + 18.5 }, { x: 35, y: 2.5, z: 0.3 }, { x: 0, y: 1, z: 0, angle: Math.PI / 2 });
@@ -116,17 +116,17 @@ export default class Bowling {
 
     //refer https://sbcode.net/threejs/convexgeometry/ for creating covex hull for pins and correct import of MTLLoader and OBJLoader
     private loadModels(): void {
-        // this.MTLLoader.load('/assets/playground/bowling/bowlingBall.mtl', (materials) => {
+        // this.MTLLoader.load('./assets/playground/bowling/bowlingBall.mtl', (materials) => {
         //     materials.preload();
         //     this.OBJLoader.setMaterials(materials);
-        //     this.OBJLoader.load('/assets/playground/bowling/bowlingBall.obj', (object) => {
+        //     this.OBJLoader.load('./assets/playground/bowling/bowlingBall.obj', (object) => {
         //         this.ballMesh = object;
         //         this.ballMesh.scale.set(1, 1, 1);
         //         this.setupBall();
         //         this.checkModelLoaded();
         //     });
         // });
-        this.GLTFloader.load('/assets/playground/bowling/bowlingBall.glb', (gltf) => {
+        this.GLTFloader.load('./assets/playground/bowling/bowlingBall.glb', (gltf) => {
             const ballMesh = gltf.scene;
             ballMesh.scale.set(1, 1, 1);
             this.ballMesh = ballMesh;
@@ -134,7 +134,7 @@ export default class Bowling {
             this.checkModelLoaded();
         });
 
-        this.GLTFloader.load('/assets/playground/bowling/bowlingPin.glb', (gltf) => {
+        this.GLTFloader.load('./assets/playground/bowling/bowlingPin.glb', (gltf) => {
             const pinMesh = gltf.scene;
             pinMesh.position.y = 0;
             pinMesh.scale.set(0.7, 0.7, 0.7);
@@ -143,10 +143,10 @@ export default class Bowling {
             this.checkModelLoaded();
         });
 
-        // this.MTLLoader.setPath('/assets/playground/bowling/').load('bowlingPin.mtl', (materials) => {
+        // this.MTLLoader.setPath('./assets/playground/bowling/').load('bowlingPin.mtl', (materials) => {
         //     materials.preload();
         //     this.OBJLoader.setMaterials(materials);
-        //     this.OBJLoader.setPath('/assets/playground/bowling/').load('bowlingPin.obj', (object) => {
+        //     this.OBJLoader.setPath('./assets/playground/bowling/').load('bowlingPin.obj', (object) => {
         //         object.position.y = 0;
         //         this.pinMesh = object;
         //         this.pinMesh.scale.set(0.7, 0.7, 0.7);
