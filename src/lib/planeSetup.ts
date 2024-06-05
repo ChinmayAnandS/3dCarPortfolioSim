@@ -36,9 +36,10 @@ export default class planeSetup {
     private mouse: THREE.Vector2;
     private raycaster: THREE.Raycaster;
     private clickables: THREE.Object3D[] = [];
+    private carBody!: CANNON.Body;
 
 
-    constructor(scene: THREE.Scene, world: CANNON.World, groundBodyMaterial: CANNON.Material, camera: THREE.Camera, canvas: HTMLCanvasElement) {
+    constructor(scene: THREE.Scene, world: CANNON.World, groundBodyMaterial: CANNON.Material, camera: THREE.Camera, canvas: HTMLCanvasElement, carBody: CANNON.Body) {
         this.scene = scene;
         this.world = world;
         this.groundBodyMaterial = groundBodyMaterial;
@@ -46,6 +47,7 @@ export default class planeSetup {
         this.raycaster = new THREE.Raycaster();
         this.canvas = canvas;
         this.camera = camera;
+        this.carBody = carBody;
 
 
         // this.initPlane();
@@ -67,6 +69,8 @@ export default class planeSetup {
         // this.scene.add(plane);
 
         this.addPropsGLTF('./assets/playground/plane/grndFin3.glb', { x: 0, y: -0.5, z: 0 }, { x: 1, y: 1, z: 1 }, { x: 0, y: Math.PI, z: 0 });
+
+        this.addPropsGLTF('./assets/playground/miscelleneous/controlInstructions.glb', { x: -55, y: 2, z: -22 }, { x: 1, y: 1, z: 1 }, { x: 0, y: -Math.PI / 4, z: 0 });
 
         //event listener for mouse click
         this.canvas.addEventListener('click', this.onDocumentMouseClick.bind(this))
@@ -116,13 +120,13 @@ export default class planeSetup {
 
     private socialsSetup(position: Position, scale: Scale) {
         this.addPropsGLTF('./assets/socials/github.glb', { x: position.x, y: position.y, z: position.z }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
-        this.createCannonBody(new CANNON.Cylinder(1.8, 1.8, 1, 8), { x: position.x, y: position.y, z: position.z }, { x: 0, y: 0, z: 1, angle: Math.PI / 2 }, 0);
+        this.createCannonBody(new CANNON.Cylinder(1.8, 1.8, 1, 8), { x: position.x, y: position.y, z: position.z }, { x: 0, y: 0, z: 1, angle: Math.PI / 2 }, 0, 'github');
         this.addPropsGLTF('./assets/socials/linkedIn.glb', { x: position.x, y: position.y, z: position.z - 10 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
-        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 10 }, { x: 0, y: 0, z: 0, angle: 0 }, 0);
+        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 10 }, { x: 0, y: 0, z: 0, angle: 0 }, 0, 'linkedIn');
         this.addPropsGLTF('./assets/socials/mail.glb', { x: position.x, y: position.y, z: position.z - 20 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
-        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 20 }, { x: 0, y: 0, z: 0, angle: 0 }, 0);
+        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 20 }, { x: 0, y: 0, z: 0, angle: 0 }, 0, 'email');
         this.addPropsGLTF('./assets/socials/X.glb', { x: position.x, y: position.y, z: position.z - 30 }, scale, { x: Math.PI / 2, y: 0, z: Math.PI / 2 });
-        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 30 }, { x: 0, y: 0, z: 0, angle: 0 }, 0);
+        this.createCannonBody(new CANNON.Box(new CANNON.Vec3(0.3, 1.5, 1.5)), { x: position.x, y: position.y, z: position.z - 30 }, { x: 0, y: 0, z: 0, angle: 0 }, 0, 'twitter');
     }
 
     // private initPlane() {
@@ -199,14 +203,31 @@ export default class planeSetup {
         });
     }
 
-    private createCannonBody(shape: CANNON.Shape, position: Position, rotation: Rotation, mass: number): void {
+    private createCannonBody(shape: CANNON.Shape, position: Position, rotation: Rotation, mass: number, name: string): void {
         const body = new CANNON.Body({
             mass: mass,
             shape: shape,
             position: new CANNON.Vec3(position.x, position.y, position.z),
         });
         body.quaternion.setFromAxisAngle(new CANNON.Vec3(rotation.x, rotation.y, rotation.z), rotation.angle);
+        body.addEventListener('collide', (e: any) => { this.handleCollision(e, name) })
         this.world.addBody(body);
+    }
+
+    private handleCollision(e: any, name: string): void {
+        const bodyA = e.body;
+        const bodyB = e.target;
+        if (bodyA === this.carBody || bodyB === this.carBody) {
+            if (name === 'email') {
+                window.open('mailto:write2chimbu@gmail.com');
+            } else if (name === 'github') {
+                window.open('https://github.com/ChinmayAnandS', '_blank');
+            } else if (name === 'linkedIn') {
+                window.open('https://www.linkedin.com/in/chinmay-anand-s-a61162202', '_blank');
+            } else if (name === 'twitter') {
+                window.open('https://x.com/k0d3_whisker', '_blank');
+            }
+        }
     }
 
     private onDocumentMouseClick(event: MouseEvent): void {

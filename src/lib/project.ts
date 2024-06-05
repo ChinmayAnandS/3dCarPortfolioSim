@@ -55,7 +55,7 @@ export default class Project {
 
     private addPhotoToBanner() {
         this.link = 'https://chinmayanands.github.io/GPAgenerator/'
-        let picPath = '/assets/project/projectPictures/GPAGenerator.jpg'
+        let picPath = './assets/project/projectPictures/GPAGenerator.jpg'
         this.TextureLoader.load(picPath, (texture) => {
             let material = new THREE.MeshBasicMaterial({ map: texture });
             let geometry = new THREE.BoxGeometry(11, 5.5, 0.01)

@@ -236,21 +236,25 @@ const controller = {
 document.addEventListener('keydown', (e) => {
   switch (e.key) {
     case 'w':
+    case 'W':
     case 'ArrowUp':
       vehicle.applyEngineForce(-controller.maxForce, 2)
       vehicle.applyEngineForce(-controller.maxForce, 3)
       break
     case 's':
+    case 'S':
     case 'ArrowDown':
       vehicle.applyEngineForce(controller.maxForce, 2)
       vehicle.applyEngineForce(controller.maxForce, 3)
       break
     case 'a':
+    case 'A':
     case 'ArrowLeft':
       vehicle.setSteeringValue(controller.maxSteerVal, 0)
       vehicle.setSteeringValue(controller.maxSteerVal, 1)
       break
     case 'd':
+    case 'D':
     case 'ArrowRight':
       vehicle.setSteeringValue(-controller.maxSteerVal, 0)
       vehicle.setSteeringValue(-controller.maxSteerVal, 1)
@@ -266,6 +270,7 @@ document.addEventListener('keydown', (e) => {
       vehicle.applyEngineForce(-controller.nosBoost - controller.maxForce, 3)
       break
     case 'r':
+    case 'R':
       controller.resetCar()
       break
   }
@@ -275,16 +280,20 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('keyup', (e) => {
   switch (e.key) {
     case 'w':
+    case 'W':
     case 'ArrowUp':
     case 's':
+    case 'S':
     case 'ArrowDown':
     case 'Shift':
       vehicle.applyEngineForce(0, 2)
       vehicle.applyEngineForce(0, 3)
       break
     case 'a':
+    case 'A':
     case 'ArrowLeft':
     case 'd':
+    case 'D':
     case 'ArrowRight':
       vehicle.setSteeringValue(0, 0)
       vehicle.setSteeringValue(0, 1)
@@ -342,7 +351,7 @@ wheelLoader.load('./assets/car/carWheel2.glb', (gltf) => {
 })
 
 //setup playground
-new planeSetup(scene, world, groundBody.material, camera, renderer.domElement)
+new planeSetup(scene, world, groundBody.material, camera, renderer.domElement, carBody)
 
 //playground for car
 

@@ -42,7 +42,7 @@ export default class TextName {
 
     private initFirstNameText(): void {
         const loader = new GLTFLoader();
-        loader.load('./assets/playground/miscelleneous/firstName.glb', (gltf) => {
+        loader.load('./assets/playground/miscelleneous/firstName1.glb', (gltf) => {
             this.model = gltf.scene.children[0] as THREE.Mesh;
             this.model.scale.set(1.5, 1.5, 1.5)
             this.model.position.set(this.textPosition.x, this.textPosition.y, this.textPosition.z);
@@ -56,7 +56,7 @@ export default class TextName {
 
     private initLastNameText(): void {
         const loader = new GLTFLoader();
-        loader.load('./assets/playground/miscelleneous/lastName.glb', (gltf) => {
+        loader.load('./assets/playground/miscelleneous/lastName1.glb', (gltf) => {
             this.model1 = gltf.scene.children[0] as THREE.Mesh;
             this.model1.scale.set(1.5, 1.5, 1.5)
             this.model1.position.set(this.textPosition.x, this.textPosition.y, this.textPosition.z + 5.5);
@@ -70,7 +70,7 @@ export default class TextName {
 
     private initInitialsText(): void {
         const loader = new GLTFLoader();
-        loader.load('./assets/playground/miscelleneous/initial.glb', (gltf) => {
+        loader.load('./assets/playground/miscelleneous/initial1.glb', (gltf) => {
             this.model2 = gltf.scene.children[0] as THREE.Mesh;
             this.model2.scale.set(1.5, 2, 1.5)
             this.model2.position.set(this.textPosition.x, this.textPosition.y, this.textPosition.z);
