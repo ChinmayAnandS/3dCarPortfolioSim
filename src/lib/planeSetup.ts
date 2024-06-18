@@ -231,7 +231,7 @@ export default class planeSetup {
             } else if (name === 'github') {
                 window.open('https://github.com/ChinmayAnandS', '_blank');
             } else if (name === 'linkedIn') {
-                window.open('https://www.linkedin.com/in/chinmay-anand-s-a61162202', '_blank');
+                window.open('https://www.linkedin.com/in/chinmay-anand-s', '_blank');
             } else if (name === 'twitter') {
                 window.open('https://x.com/k0d3_whisker', '_blank');
             }
