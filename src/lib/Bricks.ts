@@ -1,16 +1,11 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { CustomBody } from './CustomBody';
+import { Position } from '../util/types';
 
 interface Brick {
     body: CustomBody;
     mesh: THREE.Mesh;
-}
-
-interface Position {
-    x: number;
-    y: number;
-    z: number;
 }
 
 interface Size {

@@ -1,29 +1,11 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es'
+import { Position, Rotation, Scale } from '../util/types';
 
 // import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 // import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 // import { Sky } from 'three/addons/objects/Sky.js'
-
-interface Position {
-    x: number;
-    y: number;
-    z: number;
-}
-
-interface Scale {
-    x: number;
-    y: number;
-    z: number;
-}
-
-interface Rotation {
-    x: number;
-    y: number;
-    z: number;
-    angle: number;
-}
 
 
 export default class planeSetup {

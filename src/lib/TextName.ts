@@ -1,12 +1,7 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-
-interface Position {
-    x: number;
-    y: number;
-    z: number;
-}
+import { Position } from '../util/types';
 
 export default class TextName {
     private scene: THREE.Scene;

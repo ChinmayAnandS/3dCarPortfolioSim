@@ -6,25 +6,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 import AddPropGLTF from '../util/addPropGLTF';
 import AddCannonBox from '../util/addCannonBox';
-
-interface Position {
-    x: number;
-    y: number;
-    z: number;
-}
-
-// interface Scale {
-//     x: number;
-//     y: number;
-//     z: number;
-// }
-
-// interface Rotation {
-//     x: number;
-//     y: number;
-//     z: number;
-//     angle: number;
-// }
+import { Position } from '../util/types';
 
 interface BallDimensions {
     radius: number;

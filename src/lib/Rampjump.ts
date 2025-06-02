@@ -1,11 +1,6 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-
-interface Position {
-    x: number;
-    y: number;
-    z: number;
-}
+import { Position, Rotation } from '../util/types';
 
 interface RampSize {
     width: number;
@@ -13,24 +8,17 @@ interface RampSize {
     depth: number;
 }
 
-interface rampAngle {
-    x: number;
-    y: number;
-    z: number;
-    angle: number;
-}
-
 export default class Rampjump {
     private scene: THREE.Scene;
     private world: CANNON.World;
     private rampPosition: Position;
     private rampSize: RampSize;
-    private rampAngle: rampAngle;
+    private rampAngle: Rotation;
     private rampPhysicsMaterial: CANNON.Material;
     private rampMesh!: THREE.Mesh;
     private rampBody!: CANNON.Body;
 
-    constructor(scene: THREE.Scene, world: CANNON.World, rampPosition: Position, rampSize: RampSize, rampAngle: rampAngle) {
+    constructor(scene: THREE.Scene, world: CANNON.World, rampPosition: Position, rampSize: RampSize, rampAngle: Rotation) {
         this.scene = scene;
         this.world = world;
         this.rampPosition = rampPosition;

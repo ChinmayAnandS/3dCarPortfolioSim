@@ -1,35 +1,34 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import addPropGLTF from '../util/addPropGLTF';
-
-interface Position {
-    x: number;
-    y: number;
-    z: number;
-}
-
-interface Rotation {
-    x: number;
-    y: number;
-    z: number;
-    angle: number;
-}
+import { Position, Rotation } from '../util/types';
 
 export default class Project {
-    scene: THREE.Scene;
-    world: CANNON.World;
-    position: Position;
-    rotation: Rotation;
-    ImageLoader: THREE.ImageLoader;
-    TextureLoader: THREE.TextureLoader;
-    raycaster: THREE.Raycaster;
-    mouse: THREE.Vector2;
-    mesh!: THREE.Mesh;
-    link!: string;
-    camera: THREE.Camera;
-    camera1: THREE.Camera;
+    private readonly scene: THREE.Scene;
+    private readonly world: CANNON.World;
+    private readonly position: Position;
+    private readonly rotation: Rotation;
+    private readonly ImageLoader: THREE.ImageLoader;
+    private readonly TextureLoader: THREE.TextureLoader;
+    private readonly raycaster: THREE.Raycaster;
+    private readonly mouse: THREE.Vector2;
+    private mesh!: THREE.Mesh;
+    private link!: string;
+    private readonly camera: THREE.Camera;
+    private readonly camera1: THREE.Camera;
+    private readonly carBody: CANNON.Body;
+    private lastOpenedTime: number = 0;
+    private cooldown: number = 5000;
 
-    constructor(scene: THREE.Scene, camera: THREE.Camera, camera1: THREE.Camera, world: CANNON.World, position: Position, rotation: Rotation) {
+    constructor(
+        scene: THREE.Scene,
+        camera: THREE.Camera,
+        camera1: THREE.Camera,
+        world: CANNON.World,
+        position: Position,
+        rotation: Rotation,
+        carBody: CANNON.Body
+    ) {
         this.scene = scene;
         this.camera = camera;
         this.camera1 = camera1;
@@ -38,6 +37,7 @@ export default class Project {
         this.rotation = rotation;
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
+        this.carBody = carBody;
 
         this.ImageLoader = new THREE.ImageLoader();
         this.TextureLoader = new THREE.TextureLoader();
@@ -51,6 +51,12 @@ export default class Project {
         this.addPhotoToBanner()
         window.addEventListener('click', this.onDocumentMouseClick.bind(this), false);
         window.addEventListener('click', this.onDocumentMouseClick1.bind(this), false);
+        this.createCannonBody(
+            new CANNON.Cylinder(0.5, 0.5, 4, 8),
+            this.position,
+            this.rotation,
+            0
+        );
     }
 
     private addPhotoToBanner() {
@@ -103,6 +109,32 @@ export default class Project {
             if (intersects[0].object === this.mesh) {
                 window.open(this.link, '_blank');
             }
+        }
+    }
+
+    // add a private method to create a body for the project
+    private createCannonBody(shape: CANNON.Shape, position: Position, rotation: Rotation, mass: number): void {
+        const body = new CANNON.Body({
+            mass: mass,
+            shape: shape,
+            position: new CANNON.Vec3(position.x, position.y, position.z),
+        });
+        body.quaternion.setFromAxisAngle(new CANNON.Vec3(rotation.x, rotation.y, rotation.z), rotation.angle);
+        body.addEventListener('collide', (e: any) => { this.handleCollision(e) })
+        this.world.addBody(body);
+    }
+
+    private handleCollision(e: any): void {
+        let currentTime = Date.now();
+        if (currentTime - this.lastOpenedTime < this.cooldown) {
+            return;
+        }
+        const bodyA = e.body;
+        const bodyB = e.target;
+        if (bodyA === this.carBody || bodyB === this.carBody) {
+            this.lastOpenedTime = currentTime;
+            console.log(this.lastOpenedTime)
+            window.open(this.link, '_blank');
         }
     }
 }

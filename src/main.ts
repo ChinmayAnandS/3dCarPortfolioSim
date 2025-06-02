@@ -3,7 +3,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import * as CANNON from 'cannon-es'
-// import CannonDebugger from 'cannon-es-debugger'
+import CannonDebugger from 'cannon-es-debugger'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import Stats from 'three/addons/libs/stats.module.js'
 import TWEEN from '@tweenjs/tween.js'
@@ -391,7 +391,7 @@ const textName = new TextName(scene, groundBody.material, world, { x: -45, y: 1,
 
 new SignBoard(scene, world, { x: -40, y: 0, z: -5 })
 
-new Project(scene, camera, camera1, world, { x: -35, y: 0, z: -45 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 })
+new Project(scene, camera, camera1, world, { x: -35, y: 0, z: -45 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 }, carBody)
 
 //stats
 const stats = new Stats()
@@ -402,14 +402,14 @@ world.broadphase = new CANNON.SAPBroadphase(world)
 world.defaultContactMaterial.friction = 0
 
 //cannon debugger
-// const cannonDebugger = new (CannonDebugger as any)(scene, world)
+const cannonDebugger = new (CannonDebugger as any)(scene, world)
 
 function animate() {
   //update physics
   world.fixedStep();
 
   //cannon debugger
-  // cannonDebugger.update()
+  cannonDebugger.update()
 
   if (car) {
     car.position.set(carBody.position.x, carBody.position.y, carBody.position.z)
@@ -448,7 +448,7 @@ function animate() {
     controls.update()
   }
 
-  TWEEN.update()
+  // TWEEN.update()
   renderer.render(scene, useSecondCamera ? camera1 : camera)
   requestAnimationFrame(animate)
 
