@@ -8,7 +8,6 @@ export default class Project {
     private readonly world: CANNON.World;
     private readonly position: Position;
     private readonly rotation: Rotation;
-    private readonly ImageLoader: THREE.ImageLoader;
     private readonly TextureLoader: THREE.TextureLoader;
     private readonly raycaster: THREE.Raycaster;
     private readonly mouse: THREE.Vector2;
@@ -39,7 +38,6 @@ export default class Project {
         this.mouse = new THREE.Vector2();
         this.carBody = carBody;
 
-        this.ImageLoader = new THREE.ImageLoader();
         this.TextureLoader = new THREE.TextureLoader();
 
         this.init();
