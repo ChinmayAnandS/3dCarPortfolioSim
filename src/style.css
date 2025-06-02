@@ -5,11 +5,28 @@ body {
 }
 
 #progressBar {
-  width: 500px;
-  height: 24px;
+  width: 80vw;
+  max-width: 500px;
+  min-width: 200px;
+  height: 2.5vw;
+  max-height: 32px;
+  min-height: 16px;
   position: absolute;
   left: 50%;
-  top: 450px;
-  margin-left: -250px;
+  top: 15vh;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  background: #eee;
+}
+
+@media (max-width: 600px) {
+  #progressBar {
+    width: 95vw;
+    height: 24px;
+    top: 10vh;
+    min-width: 120px;
+    font-size: 14px;
+  }
 }
 
