@@ -8,7 +8,9 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d ./dist"
+    "deploy": "gh-pages -d ./dist",
+    "release": "standard-version --release-as minor",
+    "postrelease": "git push --follow-tags origin main && npm run build && gh-pages -d ./dist"
   },
   "devDependencies": {
     "@tweenjs/tween.js": "^23.1.2",
@@ -17,6 +19,7 @@
     "cannon-es": "^0.20.0",
     "dat.gui": "^0.7.9",
     "gh-pages": "^6.1.1",
+    "standard-version": "^9.5.0",
     "three": "^0.164.1",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
