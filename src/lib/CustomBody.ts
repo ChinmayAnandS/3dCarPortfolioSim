@@ -1,16 +1,16 @@
 // CustomBody.ts
 
-import * as CANNON from 'cannon-es';
+import * as CANNON from "cannon-es";
 
 interface UserData {
-    isCube?: boolean;
-    isBrick?: boolean;
+  isCube?: boolean;
+  isBrick?: boolean;
 }
 
 export class CustomBody extends CANNON.Body {
-    userData: UserData = {};
+  userData: UserData = {};
 
-    constructor(options?: CANNON.BodyOptions) {
-        super(options);
-    }
+  constructor(options?: CANNON.BodyOptions) {
+    super(options);
+  }
 }

@@ -1,9 +1,11 @@
 # 3dCarPortfolioSim
 
 ## Overview
+
 This 3D game portfolio showcases my skills in web development, utilizing Three.js for rendering and Cannon.js for physics simulation, and highlights my proficiency in TypeScript. Inspired by Bruno Simon's renowned portfolio, this project demonstrates my expertise in creating interactive and dynamic web experiences.
 
 ## Acccess the website
+
 It is best if the website is access on a destop/a pc. It is not compatible with mobile devices.\
 To access the website you can simply click [here](https://chinmayanands.github.io/3dCarPortfolioSim/)
 
@@ -53,7 +55,7 @@ This project was deployed to github-pages using the below command
 
 A huge shout out to [@Bruno-Simon](https://github.com/brunosimon/) for inpiring me to make this project. It is not as good as Simon's page, but hey this is a start!
 
- - [Burno-Simon](https://bruno-simon.com/)
+- [Burno-Simon](https://bruno-simon.com/)
 
 ## Authors
 
