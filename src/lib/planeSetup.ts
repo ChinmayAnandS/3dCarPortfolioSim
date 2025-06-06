@@ -65,6 +65,38 @@ export default class planeSetup {
 
         //add boerder for central area
         this.addInnerBorder();
+
+        //add props for cannon body
+        this.createCannonBodyForProps(
+            new CANNON.Cylinder(2.5, 2.5, 2, 8),
+            { x: -43, y: 0, z: 14},
+            { x: 0, y: 0, z: 0, angle: 0 },
+            0
+        )
+        this.createCannonBodyForProps(
+            new CANNON.Cylinder(6.5, 6.5, 0.35 , 10),
+            { x: -47, y: 0, z: 34 },
+            { x: 0, y: 0, z: 0, angle: 0 },
+            0
+        )
+        this.createCannonBodyForProps(
+            new CANNON.Cylinder(1.3, 1.3, 3 , 10),
+            { x: -47, y: 0, z: 34 },
+            { x: 0, y: 0, z: 0, angle: 0 },
+            0
+        )
+        this.createCannonBodyForProps(
+            new CANNON.Cylinder(2.5, 2.5, 3 , 10),
+            { x: -16, y: 0, z: 19.5 },
+            { x: 0, y: 0, z: 0, angle: 0 },
+            0
+        )
+        this.createCannonBodyForProps(
+            new CANNON.Cylinder(0.5, 0.5, 3 , 6),
+            { x: -13, y: 0, z: 18 },
+            { x: 0, y: 0, z: 0, angle: 0 },
+            0
+        )
     }
 
     private addInnerBorder(): void {
@@ -243,5 +275,16 @@ export default class planeSetup {
                 window.open('https://x.com/k0d3_whisker', '_blank')
             }
         }
+    }
+
+    //add rigid body for props in plane
+    private createCannonBodyForProps(shape: CANNON.Shape, position: Position, rotation: Rotation, mass: number): void {
+        const body = new CANNON.Body({
+            mass: mass,
+            shape: shape,
+            position: new CANNON.Vec3(position.x, position.y, position.z),
+        });
+        body.quaternion.setFromAxisAngle(new CANNON.Vec3(rotation.x, rotation.y, rotation.z), rotation.angle);
+        this.world.addBody(body);
     }
 }
