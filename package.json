@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d ./dist",
-    "release": "standard-version --release-as minor",
+    "release": "standard-version --prerelease beta",
     "postrelease": "git push --follow-tags origin main && npm run build && gh-pages -d ./dist"
   },
   "devDependencies": {
