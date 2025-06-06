@@ -9,28 +9,35 @@ Thank you for considering contributing to 3D Car Portfolio! I deeply appreciate 
 2. **Clone your fork**: 
    ```sh
    git clone https://github.com/ChinmayAnandS/3dCarPortfolioSim.git
-   cd 3dCarPortfolio
+   cd 3dCarPortfolioSim
+   ```
 
-3. **Create a new branch**: It is important to create a new branch for each feature/fix you plan to work on.
-    ```sh
-    git checkout -b feature-or-fix-name
+3. **Create a new branch (optional but recommended)**: It is recommended to create a new branch for each feature/fix you plan to work on, but you can also use your fork's `main` branch directly if you prefer.
+   ```sh
+   git checkout -b feature-or-fix-name
+   # or just use main branch
+   ```
 
 4. **Make your changes**: Implement your feature or fix
 
-5. **Commit your changes**: MAke sure to write a meaningful commit message.
-    ```sh
-    git add .
-    git commit -m "Breif description of your changes"
+5. **Commit your changes**: Make sure to write a meaningful commit message.
+   ```sh
+   git add .
+   git commit -m "Brief description of your changes"
+   ```
 
 6. **Push to your fork**:
-    ```sh
-    git push origin feature-or-fix-name
+   ```sh
+   git push origin feature-or-fix-name
+   # or if you used main branch:
+   git push origin main
+   ```
 
-7. **Open a PR(pull request)**: Go to the original repository and open a pull request. Provide a clear description of what you have done and why.
+7. **Open a PR (pull request)**: Go to the original repository and open a pull request from your fork's branch (e.g., `main` or your feature branch) to the original repository's `main` branch. Provide a clear description of what you have done and why.
 
 ## Code Style
- - Follow the existin code style.
- - Write clear and consise code.
+ - Follow the existing code style.
+ - Write clear and concise code.
  - Comment your code where necessary.
 
 ## Reporting Bugs
