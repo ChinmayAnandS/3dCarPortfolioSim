@@ -391,7 +391,13 @@ const textName = new TextName(scene, groundBody.material, world, { x: -45, y: 1,
 
 new SignBoard(scene, world, { x: -40, y: 0, z: -5 })
 
-new Project(scene, camera, camera1, world, { x: -35, y: 0, z: -45 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 }, carBody)
+new Project(scene, camera, camera1, world, { x: -35, y: 0, z: -45 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 }, carBody, './assets/project/projectPictures/GPAGenerator.jpg', 'https://chinmayanands.github.io/GPAgenerator/')
+
+new Project(scene, camera, camera1, world, { x: -20, y: 0, z: -45 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 }, carBody, './assets/project/projectPictures/QRCodeGenerator.png', 'https://chinmayanands.github.io/QRCodeGenerator/')
+
+// Example of adding another project:
+// new Project(scene, camera, camera1, world, { x: -35, y: 0, z: -55 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 }, carBody, './assets/project/projectPictures/image.png', 'https://example.com/project')
+
 
 //stats
 const stats = new Stats()

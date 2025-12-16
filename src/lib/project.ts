@@ -12,7 +12,7 @@ export default class Project {
     private readonly raycaster: THREE.Raycaster;
     private readonly mouse: THREE.Vector2;
     private mesh!: THREE.Mesh;
-    private link!: string;
+    private link: string;
     private readonly camera: THREE.Camera;
     private readonly camera1: THREE.Camera;
     private readonly carBody: CANNON.Body;
@@ -26,7 +26,9 @@ export default class Project {
         world: CANNON.World,
         position: Position,
         rotation: Rotation,
-        carBody: CANNON.Body
+        carBody: CANNON.Body,
+        imagePath: string,
+        linkUrl: string
     ) {
         this.scene = scene;
         this.camera = camera;
@@ -37,16 +39,17 @@ export default class Project {
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
         this.carBody = carBody;
+        this.link = linkUrl;
 
         this.TextureLoader = new THREE.TextureLoader();
 
-        this.init();
+        this.init(imagePath);
     }
 
-    init() {
+    init(imagePath: string) {
         // console.log('Project initialized');
         addPropGLTF(this.scene, this.position, { x: 1, y: 1, z: 1 }, this.rotation, './assets/project/projectBanner.glb');
-        this.addPhotoToBanner()
+        this.addPhotoToBanner(imagePath)
         window.addEventListener('click', this.onDocumentMouseClick.bind(this), false);
         window.addEventListener('click', this.onDocumentMouseClick1.bind(this), false);
         this.createCannonBody(
@@ -57,10 +60,8 @@ export default class Project {
         );
     }
 
-    private addPhotoToBanner() {
-        this.link = 'https://chinmayanands.github.io/GPAgenerator/'
-        let picPath = './assets/project/projectPictures/GPAGenerator.jpg'
-        this.TextureLoader.load(picPath, (texture) => {
+    private addPhotoToBanner(imagePath: string) {
+        this.TextureLoader.load(imagePath, (texture) => {
             let material = new THREE.MeshBasicMaterial({ map: texture });
             let geometry = new THREE.BoxGeometry(11, 5.5, 0.01)
             this.mesh = new THREE.Mesh(geometry, material);
