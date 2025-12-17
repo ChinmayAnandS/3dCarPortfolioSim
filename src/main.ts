@@ -395,6 +395,8 @@ new Project(scene, camera, camera1, world, { x: -35, y: 0, z: -45 }, { x: 0, y: 
 
 new Project(scene, camera, camera1, world, { x: -20, y: 0, z: -45 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 }, carBody, './assets/project/projectPictures/QRCodeGenerator.png', 'https://chinmayanands.github.io/QRCodeGenerator/')
 
+new Project(scene, camera, camera1, world, { x: -5, y: 0, z: -45 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 }, carBody, './assets/project/projectPictures/ClipStack.png', 'https://github.com/ChinmayAnandS/ClipStack')
+
 // Example of adding another project:
 // new Project(scene, camera, camera1, world, { x: -35, y: 0, z: -55 }, { x: 0, y: 1, z: 0, angle: -Math.PI / 6 }, carBody, './assets/project/projectPictures/image.png', 'https://example.com/project')
 
